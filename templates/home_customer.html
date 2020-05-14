@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}GT Food Truck - Home{% endblock %}
+{% block content %}
+    <h1>Hello, {{ session['username'] }}</h1>
+		<p><button><a href="{{ url_for('customer_explore') }}">explore</a></button>
+		<p><button><a href="{{ url_for('customer_current_information') }}">current info</a></button>
+		<p><button><a href="{{ url_for('customer_order') }}">order</a></button>
+		<p><button><a href="{{ url_for('customer_order_history') }}">order history</a></button>
+{% endblock %}

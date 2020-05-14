@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Maintenence History{% endblock %}
+<form action= "" method="post">
+
+{% block content %}
+	<table class="table">
+	<thead>
+	<tr>
+		<th>Car</th>
+		<th>Date-Time</th>
+		<th>Employee</th>
+		<th>Problem</th>
+
+	</tr>
+	</thead>
+	<tbody>
+	{% for (car,date_time,emp,problem) in data %}
+	<tr>
+		<td>{{ car }}</td>
+		<td>{{ date_time }}</td>
+		<td>{{ emp }}</td>
+		<td>{{ problem }}</td>
+
+	</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+
+</form>
+{% endblock %}

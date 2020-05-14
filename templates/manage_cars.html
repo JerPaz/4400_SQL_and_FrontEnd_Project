@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Manage Cars{% endblock %}
+{% block content %}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<div class="span5 well">
+			<h3>Add Car</h3>
+			<form action="" method="post">
+			<p><label>Vehicle Sno :</label><input type=text name=vsno>
+			<p><label>Car Model :</label><input type=text name=model>
+			<p><label>Car Type :</label>
+				<select name=type>
+				{% for (types) in types %}
+					<option value="{{ types[0] }}">{{ types[0] }}</option>	
+				{% endfor %}
+				</select>
+			<p><label>Location :</label>
+				<select name=location>
+				{% for (loc) in locations %}
+					<option value="{{ loc[0] }}">{{ loc[0] }}</option>	
+				{% endfor %}
+				</select>
+			<p><label>Color :</label><input type=text name=color>
+			<p><label>Hourly Rate :</label><input type=text name=hr>
+			<p><label>Daily Rate :</label><input type=text name=daily>
+			<p><label>Seating Capacity :</label><input type=text name=seat>
+			<p><label> Transmission Type :</label>
+				<select name=trans>
+				<option value ="0">Automatic</option>
+				<option value ="1">Manual</option>
+				</select>
+			<p><label>Bluetooth Connectivity :</label>
+				<select name=blue>
+				<option value ="0">No</option>
+				<option value ="1">Yes</option>
+				</select>
+			<p><label>Auxillary Cable :</label>
+				<select name=aux>
+				<option value ="0">No</option>
+				<option value ="1">Yes</option>
+				</select>
+			<p><button type=submit class=btn>Add</button>
+
+	</form>
+	</div>
+	<div class="span5 well">
+        <h3>Change Car Location</h3>
+        <form action="{{ url_for('update_car') }}" method="post">
+			<p><label>Choose current location :</label>
+           			<select name=location id="location_selector">
+           			{% for (loc) in locations %}
+           				<option value="{{loc[0]}}">{{loc[0]}}</option>
+           			{% endfor %}
+           			</select>
+           		<label>Choose Model :</label>
+
+               	
+				<select name=vsn id="location_mods">
+					
+				</select>
+
+           		<p><label>Car Type :</label><input id="modifyType" type=text name=carType>
+           		<p><label>Color :</label><input id="modifyColor" type=text name=color></p>
+           		<p><label>Seating Capacity :</label><input id="modifyCap" type=text name=seatCap></p>
+           		<p><label>Transmission Type :</label><input id="modifyTrans" type=text name=transType></p>
+           		<p><label>Choose new location :</label>
+           			<select name=newLocation>
+           			{% for (loc) in locations %}
+           				<option value="{{loc[0]}}">{{loc[0]}}</option>
+           			{% endfor %}
+           			</select>
+           		<p><button type=submit class=btn>Submit Changes</button>
+               		
+           	
+
+			</form>
+	</div>
+
+	<script>
+
+		var updateCar = function() {
+			var url = 'car_data?vsn=' + $('#location_mods').val();
+			$.getJSON(url, function(data){
+				var car = data[0];
+				$('#modifyType').val(car.type);
+				$('#modifyColor').val(car.color);
+				$('#modifyCap').val(car.cap);
+				$('#modifyTrans').val(car.trans === 1 ? "Manual" : "Automatic");
+			})
+		}
+
+		var updateLocation = function() {
+			var url = 'car_data?location=' + $('#location_selector').val();
+			$.getJSON(url, function(data){
+				$('#location_mods').empty()
+				$.each(data, function(index, car){
+					$('<option/>', { value : car.vsn }).text(car.model).appendTo('#location_mods');
+				});
+				updateCar();
+			});
+		}
+
+		$('#location_selector').change(updateLocation);
+		$('#location_mods').change(updateCar);
+		$(document).ready(updateLocation);
+
+	</script>
+
+{% endblock %}

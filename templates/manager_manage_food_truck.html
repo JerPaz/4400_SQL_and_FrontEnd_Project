@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Manage Food Truck{% endblock %}
+<form action= "" method="post">
+
+{% block content %}
+	<h2>Current Rental</h2>
+	<form method="post" action="">
+	<table class="table">
+	<thead>
+	<tr>
+		<th>PickUp Time</th>
+		<th>Return Time</th>
+		<th>Car</th>
+		<th>Location</th>
+		<th>Amount</th>
+		<th>Extend?</th>
+
+	</tr>
+	</thead>
+	<tbody>
+	{% for (resid, pick_time, ret_time, car, location, amount, ret_stat, extended) in current %}
+	<tr>
+		<td>{{ pick_time }}</td>
+		<td>{% if not extended %}{{ ret_time }}{% else %}{{extended}}{% endif %}</td>
+		<td>{{ car }}</td>
+		<td>{{ location }}</td>
+		<td>{{ amount }}</td>
+		<td><input type="radio" name="extend" value="{{ resid }}"></td>
+	</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+
+	<p><select name=extenddate>
+			{% for (date) in dates %}
+				<option value="{{ date }}">{{ date }}</option>	
+			{% endfor %}
+		</select>
+		<select name=extendhour class="input-mini">
+			{% for x in range(0, 24) %}
+				<option value="{{ x }}">{{ x }}</option>
+			{% endfor %}
+		</select>:
+		<select name=extendmin class="input-mini">
+			<option value ="00" >:00</option>
+			<option value ="30" >:30</option>
+		</select>
+		<button type=submit class=btn>Extend</button>
+	</form>
+	<p><h3>Rental History</h3></p>
+	<table class="table">
+	<thead>
+	<tr>
+		<th>PickUp Time</th>
+		<th>Return Time</th>
+		<th>Car</th>
+		<th>Location</th>
+		<th>Cost</th>
+		<th>Return Status</th>
+
+	</tr>
+	</thead>
+	<tbody>
+	{% for (pick_time, ret_time,car,location,amount,ret_stat, extended) in all_res %}
+	<tr>
+		<td>{{ pick_time }}</td>
+		<td>{% if not extended %}{{ ret_time }}{% else %}{{extended}}{% endif %}</td>
+		<td>{{ car }}</td>
+		<td>{{ location }}</td>
+		<td>{{ amount }}</td>
+		<td>{{ ret_stat }}</td>
+
+</form>
+	</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+
+{% endblock %}

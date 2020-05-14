@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Rental Search{% endblock %}
+{% block content %}
+
+	<script>
+		var showHide = function(selector) {
+			var models = document.getElementById("models");
+			var types = document.getElementById("types");
+
+			if (selector.options[selector.selectedIndex].value === 'models') {
+				models.style.display = 'block';
+				types.style.display = 'none';
+			}
+			else {
+				types.style.display = 'block';
+				models.style.display = 'none';
+			}
+		}
+	</script>
+	<form action="availability" method="get">
+
+	<label>Pick Up Date and Time</label>
+		<select name=pickdate>
+			{% for (date) in dates %}
+				<option value="{{ date }}">{{ date }}</option>	
+			{% endfor %}
+		</select>
+		<select name=pickhour class="input-mini">
+			{% for x in range(0, 24) %}
+				<option value="{{ x }}">{{ x }}</option>
+			{% endfor %}
+		</select>:
+		<select name=pickmin class="input-mini">
+			<option value ="00" >:00</option>
+			<option value ="30" >:30</option>
+		</select>
+
+	<label>Return Date and Time</label>
+		<select name=returndate>
+			{% for (date) in dates %}
+				<option value="{{ date }}">{{ date }}</option>	
+			{% endfor %}
+		</select>
+		<select name=returnhour class="input-mini">
+			{% for x in range(0, 24) %}
+				<option value="{{ x }}">{{ x }}</option>
+			{% endfor %}
+		</select>:
+		<select name=returnmin class="input-mini">
+			<option value ="00" >00</option>
+			<option value ="30" >30</option>
+		</select>
+
+	<label>Location</label>
+		<select name=location>
+		{% for location in locations %}
+			<option value="{{ location[0] }}">{{ location[0] }}</option>
+		
+		{% endfor %}
+		</select>
+
+	<label>Sort By</label>
+		<select id="sortby" onchange="showHide(this)">
+			<option value="models">Model</option>
+			<option value="types">Type</option>
+		</select>
+
+	<div id="models">
+	<label>Models</label>
+		<select name=model>
+			<option value=""></option>
+		{% for (carmodel) in models %}
+			<option value="{{ carmodel[0] }}">{{ carmodel[0] }}</option>		
+		{% endfor %}
+		</select>
+	</div>
+
+	<div id="types" style='display: none'>
+	<label>Types</label>
+		<select name=types>
+			<option value=""></option>
+		{% for (type) in types %}
+			<option value="{{ type[0] }}">{{ type[0] }}</option>	
+		{% endfor %}
+		</select>
+	</div>
+
+	<p><button type=submit class=btn>Search</button>
+
+	<a href="{{ url_for('rent') }}">Reset?</a>
+	
+	</form>
+
+	
+{% endblock %}

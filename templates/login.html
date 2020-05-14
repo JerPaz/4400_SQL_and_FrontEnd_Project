@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+	<div>
+	<h1>GT Food Truck</h1>
+	<div>
+	
+	<form action="" method="post">
+		<p><label>Username</label><input type=text name=username>
+		<p><label>Password</label><input type=password name=password>
+		<p><button type=submit class=btn>Login</button>
+		<p><button><a href="{{ url_for('register') }}">Register</a></button>
+	</form>
+{% endblock %}

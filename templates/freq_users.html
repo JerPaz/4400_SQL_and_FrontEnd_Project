@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Frequent Users{% endblock %}
+<form action= "" method="post">
+
+{% block content %}
+	<table class="table">
+	<thead>
+	<tr>
+		<th>Username</th>
+		<th>Plan</th>
+		<th>Reservations</th>
+
+
+	</tr>
+	</thead>
+	<tbody>
+	{% for (username, plan, reservations) in data %}
+	<tr>
+		<td>{{ username }}</td>
+		<td>{{ plan }}</td>
+		<td>{{ reservations }}</td>
+
+	</tr>
+	{% endfor %}
+	</tbody>
+
+	</table>
+
+</form>
+{% endblock %}

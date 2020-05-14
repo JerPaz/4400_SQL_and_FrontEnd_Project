@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}GT Food Truck - Home{% endblock %}
+{% block content %}
+    <h1>Hello, {{ session['username'] }}</h1>
+		<p><button><a href="{{ url_for('admin_manage_building_and_station') }}">manage building and station</a></button>
+		<p><button><a href="{{ url_for('admin_create_food') }}">create food</a></button>
+{% endblock %}

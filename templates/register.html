@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+	<form action="" method="post">
+		<p><label>Username</label><input type=text name=username>
+		<p><label>Email</label><input type=text name=email>
+		<p><label>Last Name</label><input type=text name=lastName>
+		<p><label>First Name</label><input type=text name=firstName>
+		<p><label>Password</label><input type=password name=password>
+		<p><label>Confirm Password</label><input type=password name=passwordconf>
+		<p><label>Balance</label><input type=text name=balance>
+		<p><label>Type</label>
+			<select name=userType>
+			  <option value=Admin>Admin</option>
+			  <option value=Manager>Manager</option>
+			  <option value=Staff>Staff</option>
+			</select>
+		<p><input type=submit value=Register>
+		<p><button><a href="{{ url_for('login') }}">Back</a></button>
+	</form>
+{% endblock %}
