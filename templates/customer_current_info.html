@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Customer Info{% endblock %}
+{% block content %}
+<form action= "" method="post">
+    <h2>Current Information</h2>
+    <body>
+        <p>Station: <b>{{ cus_info_dict.station }}</b></p>
+        <p>Building: <b>{{ cus_info_dict.building }}</b></p>
+        <p>Building Tag(s): <b>{{ cus_info_dict.building_tags }}</b></p>
+        <p>Building Description: <b>{{ cus_info_dict.building_description }}</b></p>
+        <p>Balance: <b>{{ cus_info_dict.balance }}</b></p>
+        <table style="width:50%">
+            <thead>
+            <tr>
+                <th>Food Truck</th>
+                <th>Manager</th>
+                <th>Food Price</th>
+            </tr>
+            </thead>
+            
+            {% for food_dict in food_dict_list %}
+            <tr>
+                <!--
+                <td><input type = "checkbox" name = "{{ food_dict.food_name_input }}">
+                    <label>{{ food_dict.food_name }}</label></td>
+                <td>{{ food_dict.food_price }}</td>
+                <td><input type="text" name="{{ food_dict.purchase_quantity_input }}"></td>
+                -->
+            </tr>
+            {% endfor %}
+        </table>
+        <input type=submit>
+    </body>
+</form>
+{% endblock %}
