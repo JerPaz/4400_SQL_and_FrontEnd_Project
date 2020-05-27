@@ -42,7 +42,7 @@ def home():
 def login():
     error = None
     if request.method == 'POST':
-        sql = ("CALL login('{u}', {p});".format(
+        sql = ("CALL login('{u}', '{p}');".format(
             u=request.form['username'], p=request.form['password']))
         result = c.execute(sql)
 
