@@ -20,9 +20,9 @@
             
             {% for ft_dict in ft_dict_list %}
             <tr>
-                <td><label>{{ ft_dict.food_truck_name }}</label></td>
-                <td><label>{{ ft_dict.manager_name }}</label></td>
-                <td><label>{{ ft_dict.food_names }}</label></td>
+                <td><label name="{{ ft_dict.food_truck_name }}">{{ ft_dict.food_truck_name }}</label></td>
+                <td><label name="{{ ft_dict.manager_name }}">{{ ft_dict.manager_name }}</label></td>
+                <td><label name="{{ ft_dict.food_names }}">{{ ft_dict.food_names }}</label></td>
             </tr>
             {% endfor %}
         </table>
