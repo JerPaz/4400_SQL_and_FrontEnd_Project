@@ -176,15 +176,30 @@ def customer_explore():
 @app.route('/customer_current_information', methods=['GET', 'POST'])
 def customer_current_information():
     error = None
-    cur_info_sql = "CALL cus_current_information_basic('{cus_user}')".format(
+    
+    cur_info_sql = "CALL cus_current_information_basic('{cus_user}');".format(
         cus_user=session['username'])
     c.execute(cur_info_sql)
-    cur_info_table_sql = "SELECT * FROM cus_current_information_basic_result"
+    cur_info_table_sql = "SELECT * FROM cus_current_information_basic_result;"
     c.execute(cur_info_table_sql)
     cus_info_tuple = c.fetchall()
     info_row = cus_info_tuple[0]
     cus_info_dict = {'station': info_row[0], 'building': info_row[1], 'building_tags': info_row[2], 'building_description': info_row[3], 'balance': info_row[4]}
-    return render_template('customer_current_info.html', cus_info_dict=cus_info_dict, error=error)
+    
+    cur_ft_info = "CALL cus_current_information_foodTruck('{cus_user}');".format(
+        cus_user=session['username'])
+    c.execute(cur_ft_info)
+    cur_ft_info_table = "SELECT * FROM cus_current_information_foodTruck_result"
+    c.execute(cur_ft_info_table)
+    ft_info_table = c.fetchall()
+    ft_dict_list = []
+    for i in range(len(ft_info_table)):
+        ft_dict = {'food_truck_name': ft_info_table[i][0], 'manager_name': ft_info_table[i][1], 'food_names': ft_info_table[i][2].replace(",", ", ")}
+        ft_dict_list.append(ft_dict)
+    
+    #TODO Add food truck selection functionality
+
+    return render_template('customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error)
 
 
 @app.route('/customer_order', methods=['GET', 'POST'])
@@ -196,7 +211,7 @@ def customer_order():
     c.execute(food_sql)
     food_column = c.fetchall()
     food_dict_list = []
-
+    # the 'food_name_input_{}' is very important in distinguishing tags to manipulate
     for i in range(len(food_column)):
         food_dict = {'food_name': food_column[i][0], 'food_price': food_column[i][1],
                      'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}

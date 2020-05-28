@@ -14,22 +14,18 @@
             <tr>
                 <th>Food Truck</th>
                 <th>Manager</th>
-                <th>Food Price</th>
+                <th>Food(s)</th>
             </tr>
             </thead>
             
-            {% for food_dict in food_dict_list %}
+            {% for ft_dict in ft_dict_list %}
             <tr>
-                <!--
-                <td><input type = "checkbox" name = "{{ food_dict.food_name_input }}">
-                    <label>{{ food_dict.food_name }}</label></td>
-                <td>{{ food_dict.food_price }}</td>
-                <td><input type="text" name="{{ food_dict.purchase_quantity_input }}"></td>
-                -->
+                <td><label>{{ ft_dict.food_truck_name }}</label></td>
+                <td><label>{{ ft_dict.manager_name }}</label></td>
+                <td><label>{{ ft_dict.food_names }}</label></td>
             </tr>
             {% endfor %}
         </table>
-        <input type=submit>
     </body>
 </form>
 {% endblock %}
