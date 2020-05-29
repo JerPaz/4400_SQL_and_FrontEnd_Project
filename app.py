@@ -230,7 +230,6 @@ def customer_order():
             if request.form.get('food_name_input_{}'.format(i)):
                 if (food_name_input != ''):
                     try:
-                        food_name_input = int(food_name_input)
                         order_foods.append(food_dict_list[i]['food_name'])
                         order_prices.append(
                             int(food_name_input) * food_dict_list[i]['food_price'])
@@ -244,18 +243,22 @@ def customer_order():
                 else:
                     print('dbg2: CANNOT HAVE EMPTY INPUTS | REDO ORDER')
                     return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
-            else:
+            elif send_order is False:
                 print("dbg3: MUST BE CHECKED | REDO ORDER")
                 return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
-        #print(', '.join(order_foods))
-        # print(sum(order_prices))
+        print(', '.join(order_foods))
+        print(sum(order_prices))
 
-        print(session['username'])
     if send_order and len(order_dict_list) > 0:
-        # TODO INSERT STATEMENT
-        order_insert_sql = "INSERT INTO cs4400spring2020.Orders(date, customerUsername) VALUES ('{o_date}', '{cus_user}' );".format(
-            o_date="1999-06-25", cus_user=session['username'])
+        #order_insert_sql = "INSERT INTO cs4400spring2020.Orders(date, customerUsername) VALUES ('{o_date}', '{cus_user}' );".format(
+            #o_date="1999-06-25", cus_user=session['username'])
+        order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
+            o_date="1999-06-25", cus_order=session['username'])
         c.execute(order_insert_sql)
+
+        #TODO Add items to order with order details
+        get_order_id_sql = "SELECT max(orderID) FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}';".format(
+            cus_user=session['user'])
 
         # get_order_id_sql = "SELECT * FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}' AND date = '{o_date}' ORDER BY orderID DESC LIMIT 1;".format(cus_user = session['username'], o_date = "1999-06-25")
         # c.execute(get_order_id_sql)
