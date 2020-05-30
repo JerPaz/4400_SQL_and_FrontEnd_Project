@@ -212,6 +212,9 @@ def customer_current_information():
 
     #TODO Add food truck selection functionality
     if request.method == "POST":
+        print(request.form['radiobutton'])
+        for i in range(len(ft_dict_list)): 
+            print(request.form.get('radiobutton'))
         return redirect('/customer_current_info')
 
     return redirect('/customer_current_info')
@@ -261,6 +264,7 @@ def customer_order():
         for i in range(len(food_dict_list)):
             food_name_input = str(
                 request.form['purchase_quantity_input_{}'.format(i)])
+            print(request.form['purchase_quantity_input_{}'.format(i)])
             if request.form.get('food_name_input_{}'.format(i)):
                 if (food_name_input != ''):
                     try:
