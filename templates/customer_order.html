@@ -14,10 +14,16 @@
 		
 		{% for food_dict in food_dict_list %}
 		<tr>
-			<td><input type = "checkbox" name = "{{ food_dict.food_name_input }}">
-				<label style="display: inline-block">{{ food_dict.food_name }}</label></td>
-			<td>{{ food_dict.food_price }}</td>
-			<td><input type="text" name="{{ food_dict.purchase_quantity_input }}"></td>
+			<td>
+				<input type = "checkbox" name = "{{ food_dict.food_name_input }}">
+				<label style="display: inline-block">{{ food_dict.food_name }}</label>
+			</td>
+			<td>
+				{{ food_dict.food_price }}
+			</td>
+			<td>
+				<input type="text" name="{{ food_dict.purchase_quantity_input }}">
+			</td>
 
 			<!--
 			<td name=food_space>{{ food_test }}</td>
