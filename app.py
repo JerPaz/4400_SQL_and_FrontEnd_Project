@@ -201,7 +201,7 @@ def customer_current_information():
 
     return render_template('customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error)
 
-
+#For form submitting, look at PRG design pattern (post, redirect, get)
 @app.route('/customer_order', methods=['GET', 'POST'])
 def customer_order():
     error = None
