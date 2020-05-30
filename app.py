@@ -29,13 +29,19 @@ def daterange(start_date, end_date):
 @app.route("/")
 def home():
     if session.get('username'):
-        if session.get('userType') == 'Admin':
+        if 'Admin' in session.get('userType'):
+            print ("dbg: home admin screen")
             return render_template('home_admin.html')
-        if session.get('userType') == 'Customer':
-            return render_template('home_customer.html')
-        if session.get('userType') == 'Manager':
+        if 'Manager' in session.get('userType'):
+            print ("dbg: home manager screen")
             return render_template('home_manager.html')
-    return redirect(url_for('login'))
+        if 'Staff' in session.get('userType'):
+            print ("dbg: home customer/staff screen")
+            return render_template('home_customer.html')
+        if 'Customer' in session.get('userType'):
+            print ("dbg: home customer screen")
+            return render_template('home_customer.html')
+    # return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -94,7 +100,7 @@ def register():
         print("dbg9")
         password = request.form['password']
         print("dbg10")
-        balance = int(request.form['balance'])
+        balance = request.form['balance']
         print("dbg11")
         userType = request.form['userType']
         print("dbg11")
@@ -103,6 +109,10 @@ def register():
         # and last name is unique for all users
 
         print(balance)
+        if 'Customer' in userType and balance == '':
+            flash('Must have a balance if a customer', 'alert-error')
+            return render_template('register.html', error=error)
+        balance = int(balance)
         if balance < 1:
             flash('balance must be positive!', 'alert-error')
             return render_template('register.html', error=error)
@@ -173,7 +183,7 @@ def customer_explore():
     return
 
 
-@app.route('/customer_current_information', methods=['GET', 'POST'])
+@app.route('/customer_current_info', methods=['GET', 'POST'])
 def customer_current_information():
     error = None
     
@@ -198,16 +208,16 @@ def customer_current_information():
         ft_dict_list.append(ft_dict)
     
     if not request.method == "POST":
-        render_template('customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
+        render_template('/customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
 
     #TODO Add food truck selection functionality
     if request.method == "POST":
-        return redirect('/customer_current_info.html')
+        return redirect('/customer_current_info')
 
-
-    return redirect('/customer_current_info.html')
+    return redirect('/customer_current_info')
 
 #For form submitting, look at PRG design pattern (post, redirect, get)
+#Add food_truck information
 @app.route('/customer_order', methods=['GET', 'POST'])
 def customer_order():
     error = None
