@@ -133,7 +133,7 @@ INSERT INTO cs4400spring2020.`User`(username,`password`,firstname,lastname) VALU
 -- Ideally, you would hash the plaintext passwords immediately as they are entered to avoid potential exposure
 UPDATE cs4400spring2020.`User` SET `password` = md5(`password`);
 
-INSERT INTO cs4400spring2020.Customer(username,balance,stationName) VALUES ("4400_thebestclass",44.0,"Clough Commons"),("beBatman!",89.99,"Skiles Walkway"),("BuzzyAsAYellowJacket",0.5,"Skiles Walkway"),("coxRaycox",4.5,"CoC Court Yard"),("customer1",46.99,"Clough Commons"),("customer2",47.0,"CoC Court Yard"),("JHallPride",30.9,"Clough Commons"),("LifeUniverseEverything",42.42,"Campanile"),("mKJerrY",44.2,"Bio Quad"),("RPosince",67.89,"Campanile"),("RRanskans",7.78,"Bio Quad"),("sffrgerge",4.09,"Clough Commons"),("notmybusiness",19.55,"Bio Quad"),("theCustomersAlwaysRight",2.99,"CoC Court Yard"),("TingTong",50.25,"Bio Quad"),("tkingTom",70.14,"Skiles Walkway"),("toongNonyLongy",17.9,"Clough Commons"),("Violax",15.2,"Skiles Walkway"),("YouBetterBeNiceToMe",52.63,"Bio Quad");
+INSERT INTO cs4400spring2020.Customer(username,balance,stationName) VALUES ("4400_thebestclass",44.0,"Clough Commons"),("beBatman!",89.99,"Skiles Walkway"),("BuzzyAsAYellowJacket",0.5,"Skiles Walkway"),("coxRaycox",4.5,"CoC Court Yard"),("customer1",460.99,"Clough Commons"),("customer2",47.0,"CoC Court Yard"),("JHallPride",30.9,"Clough Commons"),("LifeUniverseEverything",42.42,"Campanile"),("mKJerrY",44.2,"Bio Quad"),("RPosince",67.89,"Campanile"),("RRanskans",7.78,"Bio Quad"),("sffrgerge",4.09,"Clough Commons"),("notmybusiness",19.55,"Bio Quad"),("theCustomersAlwaysRight",2.99,"CoC Court Yard"),("TingTong",50.25,"Bio Quad"),("tkingTom",70.14,"Skiles Walkway"),("toongNonyLongy",17.9,"Clough Commons"),("Violax",15.2,"Skiles Walkway"),("YouBetterBeNiceToMe",52.63,"Bio Quad");
 
 INSERT INTO cs4400spring2020.Employee(username,email) VALUES ("2Cool_not_todoschool","school@gmail.com"),("4400_thebestclass","4400_thebestclass@gatech.edu"),("Aturning_Machine12","machine12@outlook.com"),("beBatman!","beBatman!@gatech.edu"),("bestfriends4ever1","bff@hotmail.com"),("bestfriends4ever2","bff2@gmail.com"),("BuzzyAsAYellowJacket","BuzzyAsAYellowJacket@gatech.edu"),("deer.john","dj3@outlook.com"),("doe.jane","dj1@outlook.com"),("doe.john","dj2@outlook.com"),("EmmsBest","emmsbest@gatech.edu"),("employee1","employee1@gatech.edu"),("Employeeofthemonth","Employeeofthemonth@gatech.edu"),("FatherofInfoTheory","fot@gmail.com"),("ILikeFlowers","flora@gatech.edu"),("JNash28TheoryofGaming","jg@hotmail.com"),("LadyVader1977","lv1977@gatech.edu"),("LifeIsLikeABoxOfChoco.","chocolate@gmail.com"),("Manager1","manager1@gatech.edu"),("Manager2","manager2@gatech.edu"),("Manager3","manager3@gatech.edu"),("Manager4","manager4@gatech.edu"),("Nekonsh","nekonsh@gatech.edu"),("RRanskans","rranskans@gatech.edu"),("scoRa","scoRa@gatech.edu"),("sffrgerge","sff@outlook.com"),("SShen","sshen@gatech.edu"),("Staff1","staff1@gatech.edu"),("Staff2","staff2@gatech.edu"),("thereal_GPBurdell","gpb@gatech.edu"),("TingTong","tingtong@gatech.edu"),("TooCuteNottoMention","mention@gmail.com"),("Violax","violax@gatech.edu"),("WomanWhoSmashedCode","smashedcode@gmail.com"),("YayVish","yayvish@gatech.edu");
 
@@ -856,7 +856,7 @@ BEGIN
         GROUP BY FoodTruck.foodTruckName;  
         
 
-END //
+END //q
 DELIMITER ;
 
 -- Query #30: cus_order [Screen #18 Customer Order]
