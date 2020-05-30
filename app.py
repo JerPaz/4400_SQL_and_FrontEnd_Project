@@ -41,7 +41,7 @@ def home():
         if 'Customer' in session.get('userType'):
             print ("dbg: home customer screen")
             return render_template('home_customer.html')
-    # return redirect(url_for('login'))
+    return redirect(url_for('login'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -208,7 +208,7 @@ def customer_current_information():
         ft_dict_list.append(ft_dict)
     
     if not request.method == "POST":
-        render_template('/customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
+        return render_template('/customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
 
     #TODO Add food truck selection functionality
     if request.method == "POST":
