@@ -71,6 +71,7 @@ def login():
 def logout():
     session.pop('username', None)
     session.pop('userType', None)
+    session.pop('selected_food_truck', None)
     flash('Logout Success', 'alert-success')
     return redirect(url_for('login'))
 
@@ -213,7 +214,8 @@ def customer_current_information():
     #TODO Add food truck selection functionality
     if request.method == "POST":
         print(request.form['radiobutton'])
-        return redirect('/customer_current_info')
+        session['selected_food_truck'] = str(request.form['radiobutton'])
+        return redirect('/customer_order')
 
     return redirect('/customer_current_info')
 
@@ -228,34 +230,54 @@ def customer_order():
     order_foods = []
     order_prices = []
 
-    ft_info_sql = "CALL cus_current_information_foodTruck('{cus_user}');".format(
-        cus_user=session['username'])
-    c.execute(ft_info_sql)
-    food_truck_sql = "SELECT foodTruckName FROM cs4400spring2020.cus_current_information_foodTruck_result;"
-    c.execute(food_truck_sql)
-    food_trucks = c.fetchall()
+    # Block gets foods from ALL food trucks at the station, not specified food truck
+    # ft_info_sql = "CALL cus_current_information_foodTruck('{cus_user}');".format(
+    #     cus_user=session['username'])
+    # c.execute(ft_info_sql)
+    # food_truck_sql = "SELECT foodTruckName FROM cs4400spring2020.cus_current_information_foodTruck_result;"
+    # c.execute(food_truck_sql)
+    # food_trucks = c.fetchall()
+    # food_dict_list = []
+    # input_index = 0
+    # for i in range(len(food_trucks)):
+    #     temp_food_truck = food_trucks[i][0]
+    #     food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}'".format(
+    #         ft=temp_food_truck)
+    #     c.execute(food_sql)
+    #     food_column = c.fetchall()
+    #     for j in range(len(food_column)):
+    #         food_dict = {'food_name': food_column[j][0], 'food_price': food_column[j][1], 'food_truck': temp_food_truck,
+    #             'food_name_input': 'food_name_input_{}'.format(input_index), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(input_index)}
+    #         input_index += 1
+    #         food_dict_list.append(food_dict)
+    
+    # Go back to commit 4c675f57469d27840e17dfbcee2fe3ab63586012 () to see previous massive overhaul
+    # order displays ALL food trucks at the station
+    try:
+        # Will NOT work if customer has not selected a food truck
+        food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}';".format(
+            ft=str(session['selected_food_truck']))
+    except:
+        flash('Must first select a food truck to order', 'alert-error')
+        return redirect(url_for('customer_current_information'))
+    c.execute(food_sql)
+    food_column = c.fetchall()
     food_dict_list = []
-    input_index = 0
-    for i in range(len(food_trucks)):
-        temp_food_truck = food_trucks[i][0]
-        food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}'".format(
-            ft=temp_food_truck)
-        c.execute(food_sql)
-        food_column = c.fetchall()
-        for j in range(len(food_column)):
-            food_dict = {'food_name': food_column[j][0], 'food_price': food_column[j][1], 'food_truck': temp_food_truck,
-                'food_name_input': 'food_name_input_{}'.format(input_index), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(input_index)}
-            input_index += 1
-            food_dict_list.append(food_dict)
+    # the 'food_name_input_{}' is very important in distinguishing tags to manipulate
+    for i in range(len(food_column)):
+        food_dict = {'food_name': food_column[i][0], 'food_price': food_column[i][1],
+                     'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}
+        food_dict_list.append(food_dict)
 
     #When page initial loads, so it doesn't go into an infinite redirect
     if not request.method == 'POST':
-         send_order = False
-         order_date = str(date.today())
-         order_dict_list = []
-         order_foods = []
-         order_prices = []
-         return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
+        send_order = False
+        order_date = str(date.today())
+        order_dict_list = []
+        order_foods = []
+        order_prices = []
+        return render_template('customer_order.html', food_dict_list=food_dict_list,
+            food_truck = session['selected_food_truck'], error=error)
 
     #When a form is being submitted
     if request.method == 'POST':
@@ -277,15 +299,15 @@ def customer_order():
                     except:
                         # print('dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
                         flash('Quantities must be whole numbers. Please redo order.', 'alert-error')
-                        return redirect('/customer_order')
+                        return redirect(url_for('customer_order'))
                 else:
                     # print('dbg2: CANNOT HAVE EMPTY INPUTS | REDO ORDER')
                     flash('Must purchase at least one item. Please redo order.', 'alert-error')
-                    return redirect('/customer_order')
+                    return redirect(url_for('customer_order'))
         if send_order is False:
             # print("dbg3: MUST BE CHECKED | REDO ORDER")
             flash('Items for purchase are not checked. Please redo order.', 'alert-error')
-            return redirect('/customer_order')
+            return redirect(url_for('customer_order'))
         if send_order and len(order_dict_list) > 0:
             order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
                 o_date=order_date, cus_order=session['username'])
@@ -307,7 +329,7 @@ def customer_order():
             send_order = False
 
     # NEEDS to be a redirect so it doesn't resubmit previous
-    return redirect('/customer_order')
+    return redirect(url_for('customer_order'))
 
 
 @app.route('/customer_order_history', methods=['GET'])
