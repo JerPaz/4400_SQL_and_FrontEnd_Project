@@ -213,8 +213,6 @@ def customer_current_information():
     #TODO Add food truck selection functionality
     if request.method == "POST":
         print(request.form['radiobutton'])
-        for i in range(len(ft_dict_list)): 
-            print(request.form.get('radiobutton'))
         return redirect('/customer_current_info')
 
     return redirect('/customer_current_info')
