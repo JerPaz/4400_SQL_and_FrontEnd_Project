@@ -18,14 +18,33 @@
             </tr>
             </thead>
             
-            {% for ft_dict in ft_dict_list %}
-            <tr>
-                <td><label name="{{ ft_dict.food_truck_name }}">{{ ft_dict.food_truck_name }}</label></td>
-                <td><label name="{{ ft_dict.manager_name }}">{{ ft_dict.manager_name }}</label></td>
-                <td><label name="{{ ft_dict.food_names }}">{{ ft_dict.food_names }}</label></td>
-            </tr>
-            {% endfor %}
+            <tbody>
+            <form>
+                {% for ft_dict in ft_dict_list %}
+                <tr>
+                    <td>
+                        <input type="radio" name="radiobutton" value="{{ ft_dict_list.food_truck_name }}">
+                        <label for="radiobutton" name="{{ ft_dict.food_truck_name }}" style="display: inline-block">
+                            {{ ft_dict.food_truck_name }}
+                        </label>
+                    </td>
+                    <td>
+                        <label name="{{ ft_dict.manager_name }}">
+                            {{ ft_dict.manager_name }}
+                        </label>
+                    </td>
+                    <td>
+                        <label name="{{ ft_dict.food_names }}">
+                            {{ ft_dict.food_names }}
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+                </form>
+            </form>
+            </tbody>
         </table>
+        <input type="submit">
     </body>
 </form>
 {% endblock %}
