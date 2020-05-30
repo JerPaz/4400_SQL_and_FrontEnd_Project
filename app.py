@@ -197,16 +197,22 @@ def customer_current_information():
         ft_dict = {'food_truck_name': ft_info_table[i][0], 'manager_name': ft_info_table[i][1], 'food_names': ft_info_table[i][2].replace(",", ", ")}
         ft_dict_list.append(ft_dict)
     
-    #TODO Add food truck selection functionality
+    if not request.method == "POST":
+        render_template('customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
 
-    return render_template('customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error)
+    #TODO Add food truck selection functionality
+    if request.method == "POST":
+        return redirect('/customer_current_info.html')
+
+
+    return redirect('/customer_current_info.html')
 
 #For form submitting, look at PRG design pattern (post, redirect, get)
 @app.route('/customer_order', methods=['GET', 'POST'])
 def customer_order():
     error = None
     send_order = False
-    order_date = ""
+    order_date = str(date.today())
     order_dict_list = []
     order_foods = []
     order_prices = []
@@ -234,7 +240,7 @@ def customer_order():
     #When page initial loads, so it doesn't go into an infinite redirect
     if not request.method == 'POST':
          send_order = False
-         order_date = ""
+         order_date = str(date.today())
          order_dict_list = []
          order_foods = []
          order_prices = []
@@ -257,26 +263,21 @@ def customer_order():
                             'order_food_truck': food_dict_list[i]['food_truck']})
                         send_order = True
                     except:
-                        print(
-                            'dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
+                        # print('dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
+                        flash('Quantities must be whole numbers. Please redo order.', 'alert-error')
                         return redirect('/customer_order')
                 else:
-                    print('dbg2: CANNOT HAVE EMPTY INPUTS | REDO ORDER')
+                    # print('dbg2: CANNOT HAVE EMPTY INPUTS | REDO ORDER')
+                    flash('Must purchase at least one item. Please redo order.', 'alert-error')
                     return redirect('/customer_order')
         if send_order is False:
-            print(order_dict_list)
-            print("dbg3: MUST BE CHECKED | REDO ORDER")
+            # print("dbg3: MUST BE CHECKED | REDO ORDER")
+            flash('Items for purchase are not checked. Please redo order.', 'alert-error')
             return redirect('/customer_order')
-        # print(', '.join(order_foods))
-        # print(sum(order_prices))
-        # print(order_dict_list)
-
         if send_order and len(order_dict_list) > 0:
             order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
-                o_date="1999-06-25", cus_order=session['username'])
+                o_date=order_date, cus_order=session['username'])
             c.execute(order_insert_sql)
-
-            #TODO Add items to order with order details (just a few more steps)
             get_order_id_sql = "SELECT max(orderID) FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}';".format(
                 cus_user=session['username'])
             c.execute(get_order_id_sql)
@@ -287,19 +288,9 @@ def customer_order():
                 print(order_dict_list[i]['order_quantity'])
                 print(order_id)
                 order_detail_insert_sql = "CALL cus_add_item_to_order('{ft}', '{f}', '{pq}', '{o_id}');".format(
-                    ft="BubbaGumps", f=order_dict_list[i]['order_food'], pq=order_dict_list[i]['order_quantity'], o_id=order_id)
-
-
-            # get_order_id_sql = "SELECT * FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}' AND date = '{o_date}' ORDER BY orderID DESC LIMIT 1;".format(cus_user = session['username'], o_date = "1999-06-25")
-            # c.execute(get_order_id_sql)
-            # order_id = c.fetchone()
-            # order_id = order_id[1]
-            # print(order_id)
-            # for i in range((len(order_dict_list))):
-            # 	print(order_dict_list[i])
-            # 	print(order_id)
-            # 	order_detail_insert_sql = "INSERT INTO cs4400spring2020.OrderDetail(orderID, foodTruckName, foodName, purchaseQuantity) VALUES ('{o_id}', '{ftn}', '{fn}', '{pq}');".format(o_id = str(order_id), ftn = "BubbaGumps", fn = order_dict_list[i]['order_food'], pq = order_dict_list[i]['order_quantity'])
-            # 	c.execute(order_detail_insert_sql)
+                    ft=order_dict_list[i]['order_food_truck'], f=order_dict_list[i]['order_food'],
+                    pq=order_dict_list[i]['order_quantity'], o_id=str(order_id))
+                c.execute(order_detail_insert_sql)
             conn.commit()
             send_order = False
 
