@@ -180,7 +180,7 @@ def customer_current_information():
     cur_info_sql = "CALL cus_current_information_basic('{cus_user}');".format(
         cus_user=session['username'])
     c.execute(cur_info_sql)
-    cur_info_table_sql = "SELECT * FROM cus_current_information_basic_result;"
+    cur_info_table_sql = "SELECT * FROM cs4400spring2020.cus_current_information_basic_result;"
     c.execute(cur_info_table_sql)
     cus_info_tuple = c.fetchall()
     info_row = cus_info_tuple[0]
@@ -189,7 +189,7 @@ def customer_current_information():
     cur_ft_info = "CALL cus_current_information_foodTruck('{cus_user}');".format(
         cus_user=session['username'])
     c.execute(cur_ft_info)
-    cur_ft_info_table = "SELECT * FROM cus_current_information_foodTruck_result"
+    cur_ft_info_table = "SELECT * FROM cs4400spring2020.cus_current_information_foodTruck_result"
     c.execute(cur_ft_info_table)
     ft_info_table = c.fetchall()
     ft_dict_list = []
@@ -205,24 +205,42 @@ def customer_current_information():
 @app.route('/customer_order', methods=['GET', 'POST'])
 def customer_order():
     error = None
-
-    food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}';".format(
-        ft="BubbaGumps")
-    c.execute(food_sql)
-    food_column = c.fetchall()
-    food_dict_list = []
-    # the 'food_name_input_{}' is very important in distinguishing tags to manipulate
-    for i in range(len(food_column)):
-        food_dict = {'food_name': food_column[i][0], 'food_price': food_column[i][1],
-                     'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}
-        food_dict_list.append(food_dict)
-    # print(food_dict_list)
-
     send_order = False
     order_date = ""
     order_dict_list = []
     order_foods = []
     order_prices = []
+
+    ft_info_sql = "CALL cus_current_information_foodTruck('{cus_user}');".format(
+        cus_user=session['username'])
+    c.execute(ft_info_sql)
+    food_truck_sql = "SELECT foodTruckName FROM cs4400spring2020.cus_current_information_foodTruck_result;"
+    c.execute(food_truck_sql)
+    food_trucks = c.fetchall()
+    food_dict_list = []
+    input_index = 0
+    for i in range(len(food_trucks)):
+        temp_food_truck = food_trucks[i][0]
+        food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}'".format(
+            ft=temp_food_truck)
+        c.execute(food_sql)
+        food_column = c.fetchall()
+        for j in range(len(food_column)):
+            food_dict = {'food_name': food_column[j][0], 'food_price': food_column[j][1], 'food_truck': temp_food_truck,
+                'food_name_input': 'food_name_input_{}'.format(input_index), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(input_index)}
+            input_index += 1
+            food_dict_list.append(food_dict)
+
+    #When page initial loads, so it doesn't go into an infinite redirect
+    if not request.method == 'POST':
+         send_order = False
+         order_date = ""
+         order_dict_list = []
+         order_foods = []
+         order_prices = []
+         return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
+
+    #When a form is being submitted
     if request.method == 'POST':
         for i in range(len(food_dict_list)):
             food_name_input = str(
@@ -234,48 +252,59 @@ def customer_order():
                         order_prices.append(
                             int(food_name_input) * food_dict_list[i]['food_price'])
                         order_dict_list.append(
-                            {'order_food': food_dict_list[i]['food_name'], 'order_quantity': int(food_name_input)})
+                            {'order_food': food_dict_list[i]['food_name'],
+                            'order_quantity': int(food_name_input),
+                            'order_food_truck': food_dict_list[i]['food_truck']})
                         send_order = True
                     except:
                         print(
                             'dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
-                        return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
+                        return redirect('/customer_order')
                 else:
                     print('dbg2: CANNOT HAVE EMPTY INPUTS | REDO ORDER')
-                    return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
-            elif send_order is False:
-                print("dbg3: MUST BE CHECKED | REDO ORDER")
-                return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
-        print(', '.join(order_foods))
-        print(sum(order_prices))
+                    return redirect('/customer_order')
+        if send_order is False:
+            print(order_dict_list)
+            print("dbg3: MUST BE CHECKED | REDO ORDER")
+            return redirect('/customer_order')
+        # print(', '.join(order_foods))
+        # print(sum(order_prices))
+        # print(order_dict_list)
 
-    if send_order and len(order_dict_list) > 0:
-        #order_insert_sql = "INSERT INTO cs4400spring2020.Orders(date, customerUsername) VALUES ('{o_date}', '{cus_user}' );".format(
-            #o_date="1999-06-25", cus_user=session['username'])
-        order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
-            o_date="1999-06-25", cus_order=session['username'])
-        c.execute(order_insert_sql)
+        if send_order and len(order_dict_list) > 0:
+            order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
+                o_date="1999-06-25", cus_order=session['username'])
+            c.execute(order_insert_sql)
 
-        #TODO Add items to order with order details
-        get_order_id_sql = "SELECT max(orderID) FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}';".format(
-            cus_user=session['user'])
+            #TODO Add items to order with order details (just a few more steps)
+            get_order_id_sql = "SELECT max(orderID) FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}';".format(
+                cus_user=session['username'])
+            c.execute(get_order_id_sql)
+            order_id = c.fetchone()[0]
+            for i in range(len(order_dict_list)):
+                print(order_dict_list[i])
+                print(order_dict_list[i]['order_food'])
+                print(order_dict_list[i]['order_quantity'])
+                print(order_id)
+                order_detail_insert_sql = "CALL cus_add_item_to_order('{ft}', '{f}', '{pq}', '{o_id}');".format(
+                    ft="BubbaGumps", f=order_dict_list[i]['order_food'], pq=order_dict_list[i]['order_quantity'], o_id=order_id)
 
-        # get_order_id_sql = "SELECT * FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}' AND date = '{o_date}' ORDER BY orderID DESC LIMIT 1;".format(cus_user = session['username'], o_date = "1999-06-25")
-        # c.execute(get_order_id_sql)
-        # order_id = c.fetchone()
-        # order_id = order_id[1]
-        # print(order_id)
-        # for i in range((len(order_dict_list))):
-        # 	print(order_dict_list[i])
-        # 	print(order_id)
-        # 	order_detail_insert_sql = "INSERT INTO cs4400spring2020.OrderDetail(orderID, foodTruckName, foodName, purchaseQuantity) VALUES ('{o_id}', '{ftn}', '{fn}', '{pq}');".format(o_id = str(order_id), ftn = "BubbaGumps", fn = order_dict_list[i]['order_food'], pq = order_dict_list[i]['order_quantity'])
-        # 	c.execute(order_detail_insert_sql)
-        conn.commit()
-        send_order = False
 
-    return render_template('customer_order.html', food_dict_list=food_dict_list, error=error)
-    # return render_template('customer_order.html', food_test = "yeet", price_test = "price_test",
-    #	quantity_test = "quantity_test", error=error)
+            # get_order_id_sql = "SELECT * FROM cs4400spring2020.Orders WHERE customerUsername = '{cus_user}' AND date = '{o_date}' ORDER BY orderID DESC LIMIT 1;".format(cus_user = session['username'], o_date = "1999-06-25")
+            # c.execute(get_order_id_sql)
+            # order_id = c.fetchone()
+            # order_id = order_id[1]
+            # print(order_id)
+            # for i in range((len(order_dict_list))):
+            # 	print(order_dict_list[i])
+            # 	print(order_id)
+            # 	order_detail_insert_sql = "INSERT INTO cs4400spring2020.OrderDetail(orderID, foodTruckName, foodName, purchaseQuantity) VALUES ('{o_id}', '{ftn}', '{fn}', '{pq}');".format(o_id = str(order_id), ftn = "BubbaGumps", fn = order_dict_list[i]['order_food'], pq = order_dict_list[i]['order_quantity'])
+            # 	c.execute(order_detail_insert_sql)
+            conn.commit()
+            send_order = False
+
+    # NEEDS to be a redirect so it doesn't resubmit previous
+    return redirect('/customer_order')
 
 
 @app.route('/customer_order_history', methods=['GET'])
