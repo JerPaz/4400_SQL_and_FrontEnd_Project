@@ -16,7 +16,7 @@
 		{% for food_dict in food_dict_list %}
 		<tr>
 			<td>
-				<input type = "checkbox" name = "{{ food_dict.food_name_input }}">
+				<input type = "checkbox" name = "{{ food_dict.food_name_input }}" style="margin: 0;">
 				<label style="display: inline-block">{{ food_dict.food_name }}</label>
 			</td>
 			<td>
@@ -34,6 +34,7 @@
 		</tr>
 		{% endfor %}
 	</table>
-	<input type=submit>
+	<button><a href="{{ url_for('home') }}">Back</a></button>
+	<input type=submit value="Place Order">
 </form>
 {% endblock %}
