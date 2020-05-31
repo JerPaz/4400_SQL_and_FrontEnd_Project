@@ -314,7 +314,22 @@ def customer_order():
 
 @app.route('/customer_order_history', methods=['GET'])
 def customer_order_history():
-    return
+    error = None
+
+    cus_order_history_sql = "CALL cus_order_history('{}');".format(session['username'])
+    c.execute(cus_order_history_sql)
+    cus_order_history_table_sql = "SELECT * FROM cus_order_history_result;"
+    c.execute(cus_order_history_table_sql)
+    orhist_table = c.fetchall()
+    orhist_dict_list = []
+    for i in range(len(orhist_table)):
+        orhist_dict = {'date': orhist_table[i][0], 'order_id': orhist_table[i][1],
+            'order_total': orhist_table[i][2], 'food': orhist_table[i][3].replace(",", ", "),
+            'food_quantity': orhist_table[i][4]}
+        orhist_dict_list.append(orhist_dict)
+
+    return render_template('/customer_order_history.html', orhist_dict_list=orhist_dict_list, error=error) 
+
 
 # ===========================================
 # MEMBER FUNCTIONS
