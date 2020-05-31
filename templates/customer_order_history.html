@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Customer Info{% endblock %}
+{% block content %}
+<h2>Order History</h2>
+<body>
+    <table style="width:100%">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>OrderID</th>
+            <th>Order Total</th>
+            <th>Food(s)</th>
+            <th>Food Quantity</th>
+        </tr>
+        </thead>
+        
+        <tbody>
+            {% for orhist_dict in orhist_dict_list %}
+            <tr>
+                <td>
+                    <p>{{ orhist_dict.date }}</p>
+                </td>
+                <td>
+                    <p>{{ orhist_dict.order_id }}</p>
+                </td>
+                <td>
+                    <p>{{ orhist_dict.order_total }}</p>
+                </td>
+                <td>
+                    <p>{{ orhist_dict.food }}</p>
+                </td>
+                <td>
+                    <p>{{ orhist_dict.food_quantity }}</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<button><a href="{{ url_for('home') }}">Back</a></button>
+{% endblock %}
