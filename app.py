@@ -229,27 +229,6 @@ def customer_order():
     order_dict_list = []
     order_foods = []
     order_prices = []
-
-    # Block gets foods from ALL food trucks at the station, not specified food truck
-    # ft_info_sql = "CALL cus_current_information_foodTruck('{cus_user}');".format(
-    #     cus_user=session['username'])
-    # c.execute(ft_info_sql)
-    # food_truck_sql = "SELECT foodTruckName FROM cs4400spring2020.cus_current_information_foodTruck_result;"
-    # c.execute(food_truck_sql)
-    # food_trucks = c.fetchall()
-    # food_dict_list = []
-    # input_index = 0
-    # for i in range(len(food_trucks)):
-    #     temp_food_truck = food_trucks[i][0]
-    #     food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}'".format(
-    #         ft=temp_food_truck)
-    #     c.execute(food_sql)
-    #     food_column = c.fetchall()
-    #     for j in range(len(food_column)):
-    #         food_dict = {'food_name': food_column[j][0], 'food_price': food_column[j][1], 'food_truck': temp_food_truck,
-    #             'food_name_input': 'food_name_input_{}'.format(input_index), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(input_index)}
-    #         input_index += 1
-    #         food_dict_list.append(food_dict)
     
     # Go back to commit 4c675f57469d27840e17dfbcee2fe3ab63586012 () to see previous massive overhaul
     # order displays ALL food trucks at the station
@@ -265,8 +244,8 @@ def customer_order():
     food_dict_list = []
     # the 'food_name_input_{}' is very important in distinguishing tags to manipulate
     for i in range(len(food_column)):
-        food_dict = {'food_name': food_column[i][0], 'food_price': food_column[i][1],
-                     'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}
+        food_dict = {'food_name': food_column[i][0], 'food_price': food_column[i][1], 'food_truck': session['selected_food_truck'],
+            'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}
         food_dict_list.append(food_dict)
 
     #When page initial loads, so it doesn't go into an infinite redirect
@@ -297,7 +276,7 @@ def customer_order():
                             'order_food_truck': food_dict_list[i]['food_truck']})
                         send_order = True
                     except:
-                        # print('dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
+                        print('dbg: MUST HAVE INTEGER PURCHASE QUANTITIES | REDO ORDER')
                         flash('Quantities must be whole numbers. Please redo order.', 'alert-error')
                         return redirect(url_for('customer_order'))
                 else:
@@ -329,6 +308,7 @@ def customer_order():
             send_order = False
 
     # NEEDS to be a redirect so it doesn't resubmit previous
+    flash("Order Successful!")
     return redirect(url_for('customer_order'))
 
 
