@@ -113,8 +113,11 @@ def register():
         if 'Customer' in userType and balance == '':
             flash('Must have a balance if a customer', 'alert-error')
             return render_template('register.html', error=error)
-        balance = int(balance)
-        if balance < 1:
+        try:
+            balance = int(balance)
+        except:
+            balance = 0
+        if 'Customer' in userType and balance < 1:
             flash('balance must be positive!', 'alert-error')
             return render_template('register.html', error=error)
         if len(password) < 8:
