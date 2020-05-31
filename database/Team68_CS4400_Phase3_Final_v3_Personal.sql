@@ -209,7 +209,7 @@ CREATE PROCEDURE register(
                 IN i_lastname VARCHAR(50),
                 IN i_password VARCHAR(50),
                 IN i_balance DECIMAL(6,2),
-                IN i_type ENUM('Admin', 'Manager', 'Staff'))
+                IN i_type ENUM('Admin', 'Manager', 'Staff', 'Customer'))
 BEGIN
 	IF length(i_password) >= 8 AND (i_balance > 0 OR length(i_email) > 0) THEN
 		INSERT INTO cs4400spring2020.`User`(username,`password`,firstname,lastname) 
