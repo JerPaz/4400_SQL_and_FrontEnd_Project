@@ -186,10 +186,33 @@ def admin_create_food():
 def customer_explore():
     error = None
 
+    name_list_sql = "SELECT * FROM cs4400spring2020.Station;"
+    c.execute(name_list_sql)
+    name_list_tuple = c.fetchall()
+    name_dict_list = []
+    for i in range(len(name_list_tuple)):
+        name_dict = {'station_name': name_list_tuple[i][0], 'building_name': name_list_tuple[i][1]}
+        name_dict_list.append(name_dict)
+
     if not request.method == 'POST':
-        return render_template('/customer_explore.html', error=error)
+        return render_template('/customer_explore.html', name_dict_list=name_dict_list, error=error)
     
     if request.method == 'POST':
+        station_name = request.form['station_name']
+        building_name = request.form['building_name']
+        building_tag = request.form['building_tag']
+        food_truck_name = request.form['food_truck_name']
+        food_name = request.form['food']
+        print(building_name)
+        print(station_name)
+        print(building_tag)
+        print(food_truck_name)
+        print(food_name)
+
+        filter_explore_sql = "CALL cus_filter_explore('{b_n}', '{s_n}', '{b_t}', '{f_t_n}', '{f_n}');".format(
+            b_n=building_name, s_n=station_name, b_t=building_tag, f_t_n=food_truck_name, f_n=food_name)
+        c.execute(filter_explore_sql)
+        print(filter_explore_sql)
         return redirect(url_for('customer_explore'))
     
     return redirect(url_for('customer_explore'))
