@@ -182,9 +182,17 @@ def admin_create_food():
 ############################customer########
 
 
-@app.route('/customer_explore', methods=['GET'])
+@app.route('/customer_explore', methods=['GET', 'POST'])
 def customer_explore():
-    return
+    error = None
+
+    if not request.method == 'POST':
+        return render_template('/customer_explore.html', error=error)
+    
+    if request.method == 'POST':
+        return redirect(url_for('customer_explore'))
+    
+    return redirect(url_for('customer_explore'))
 
 
 @app.route('/customer_current_info', methods=['GET', 'POST'])
@@ -211,11 +219,11 @@ def customer_current_information():
         ft_dict = {'food_truck_name': ft_info_table[i][0], 'manager_name': ft_info_table[i][1], 'food_names': ft_info_table[i][2].replace(",", ", ")}
         ft_dict_list.append(ft_dict)
     
-    if not request.method == "POST":
+    if not request.method == 'POST':
         return render_template('/customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
 
     #TODO Add food truck selection functionality
-    if request.method == "POST":
+    if request.method == 'POST':
         print(request.form['radiobutton'])
         session['selected_food_truck'] = str(request.form['radiobutton'])
         return redirect('/customer_order')
