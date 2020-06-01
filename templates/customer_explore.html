@@ -4,23 +4,29 @@
 <form action= "" method="post">
 <h2>Explore</h2>
 <body>
-    <label>Building Name: </label>
-    <select name ="building_name" id ="building_name">
-        <!-- for loop: 
-            <option value =  building name > '' <option> -->
-    </select>
+
     <label>Station Name: </b></label>
     <select name ="station_name" id ="station_name">
+        {% for name_dict in name_dict_list %}
+        <option value="{{ name_dict.station_name }}"> {{ name_dict.station_name }} </option>
+        {% endfor %}
+    </select>
+
+    <label>Building Name: </label>
+    <select name ="building_name" id ="building_name">
+        {% for name_dict in name_dict_list %}
+        <option value="{{ name_dict.building_name }}"> {{ name_dict.building_name }} </option>
+        {% endfor %}
         <!-- for loop: 
-            <option value =  station name > '' <option> -->
+            <option value =  building name > '' <option> -->
     </select>
 
     <label>Building Tag (contain) </label>
         <input type="text" name="building_tag">
     <label>Food Truck Name (contain) </label>
-        <input type="text" name="building_tag">
+        <input type="text" name="food_truck_name">
     <label>Food (contain) </label>
-        <input type="text" name="building_tag">
+        <input type="text" name="food">
     
     <table style="width:100%">
         <thead>
