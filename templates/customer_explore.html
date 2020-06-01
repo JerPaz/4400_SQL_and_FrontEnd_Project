@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Customer Explore{% endblock %}
+{% block content %}
+<form action= "" method="post">
+<h2>Explore</h2>
+<body>
+    <label>Building Name: </label>
+    <select name ="building_name" id ="building_name">
+        <!-- for loop: 
+            <option value =  building name > '' <option> -->
+    </select>
+    <label>Station Name: </b></label>
+    <select name ="station_name" id ="station_name">
+        <!-- for loop: 
+            <option value =  station name > '' <option> -->
+    </select>
+
+    <label>Building Tag (contain) </label>
+        <input type="text" name="building_tag">
+    <label>Food Truck Name (contain) </label>
+        <input type="text" name="building_tag">
+    <label>Food (contain) </label>
+        <input type="text" name="building_tag">
+    
+    <table style="width:100%">
+        <thead>
+        <tr>
+            <th>Station</th>
+            <th>Building</th>
+            <th>Food Truck(s)</th>
+            <th>Food(s)</th>
+        </tr>
+        </thead>
+        
+        <tbody>
+            {% for ft_dict in ft_dict_list %}
+            <tr>
+                <td>
+                    <input type="radio" name="radiobutton" value="{{ ft_dict.food_truck_name }}" style="margin: 0;">
+                        <p style="display: inline-block">{{ ft_dict.food_truck_name }}</p>
+                    </input>
+                </td>
+                <td>
+                    <p name="{{ ft_dict.manager_name }}">
+                        {{ ft_dict.manager_name }}
+                    </p>
+                </td>
+                <td>
+                    <p name="{{ ft_dict.food_names }}">
+                        {{ ft_dict.food_names }}
+                    </p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+<button><a href="{{ url_for('home') }}">Back</a></button>
+<input type="submit" value="Select As Current Location">
+</form>
+{% endblock %}
