@@ -191,7 +191,7 @@ def customer_explore():
     name_list_tuple = c.fetchall()
     name_dict_list = []
     for i in range(len(name_list_tuple)):
-        name_dict = {'station_name': name_list_tuple[i][0], 'building_name': name_list_tuple[i][1]}
+        name_dict = {'station_name': name_list_tuple[i][1], 'building_name': name_list_tuple[i][0]}
         name_dict_list.append(name_dict)
 
     if not request.method == 'POST':
@@ -209,8 +209,8 @@ def customer_explore():
         print(food_truck_name)
         print(food_name)
 
-        filter_explore_sql = "CALL cus_filter_explore('{b_n}', '{s_n}', '{b_t}', '{f_t_n}', '{f_n}');".format(
-            b_n=building_name, s_n=station_name, b_t=building_tag, f_t_n=food_truck_name, f_n=food_name)
+        filter_explore_sql = "CALL cus_filter_explore('{s_n}', '{b_n}', '{b_t}', '{f_t_n}', '{f_n}');".format(
+            s_n=station_name, b_n=building_name, b_t=building_tag, f_t_n=food_truck_name, f_n=food_name)
         c.execute(filter_explore_sql)
         print(filter_explore_sql)
         return redirect(url_for('customer_explore'))
