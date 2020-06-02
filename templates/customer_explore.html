@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Customer Explore{% endblock %}
 {% block content %}
-<form action= "" method="post">
+<form action= "" method="post"></form>
 <h2>Explore</h2>
 <body>
 
@@ -24,13 +24,15 @@
     </select>
 
     <label>Building Tag (contain) </label>
-        <input type="text" name="building_tag">
+        <input type="text" name="building_tag" id=>
     <label>Food Truck Name (contain) </label>
         <input type="text" name="food_truck_name">
     <label>Food (contain) </label>
         <input type="text" name="food">
     
-    <table style="width:100%">
+    <input onkeyup="filter_test()" placeholder="filter_test" id="filter"></button>
+    
+    <table id="station_table" style="width:100%">
         <thead>
         <tr>
             <th>Station</th>
@@ -40,33 +42,51 @@
         </tr>
         </thead>
         
-        <tbody>
-            {% for filter_dict in filter_dict_list %}
-            <tr>
-                <td>
-                    <input type="radio" name="radiobutton" value="{{ filter_dict.station }}" style="margin: 0;">
-                        <p style="display: inline-block">{{ filter_dict.station }}</p>
-                    </input>
-                </td>
-                <td>
-                    <p name="{{ filter_dict.building }}">
-                        {{ filter_dict.building }}
-                    </p>
-                </td>
-                <td>
-                    <p name="{{ filter_dict.food_truck_name}}">
-                        {{ filter_dict.food_truck_name}}
-                    </p>
-                </td>
-                <td>
-                    <p name="{{ filter_dict.food}}">
-                        {{ filter_dict.food}}
-                    </p>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+        {% for filter_dict in filter_dict_list %}
+        <tr>
+            <td>
+                <input type="radio" name="radiobutton" value="{{ filter_dict.station }}" style="margin: 0;">
+                    <p style="display: inline-block">{{ filter_dict.station }}</p>
+                </input>
+            </td>
+            <td>
+                <p name="{{ filter_dict.building }}">
+                    {{ filter_dict.building }}
+                </p>
+            </td>
+            <td>
+                <p name="{{ filter_dict.food_truck_name}}">
+                    {{ filter_dict.food_truck_name}}
+                </p>
+            </td>
+            <td>
+                <p name="{{ filter_dict.food}}">
+                    {{ filter_dict.food}}
+                </p>
+            </td>
+        </tr>
+        {% endfor %}
     </table>
+<script>
+function filter_test() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filter");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("station_table");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
 </body>
 <button><a href="{{ url_for('home') }}">Back</a></button>
 <input type="submit" value="Select As Current Location">
