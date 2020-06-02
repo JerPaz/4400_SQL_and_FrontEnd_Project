@@ -7,6 +7,7 @@
 
     <label>Station Name: </b></label>
     <select name ="station_name" id ="station_name">
+        <option value=""></option>
         {% for name_dict in name_dict_list %}
         <option value="{{ name_dict.station_name }}"> {{ name_dict.station_name }} </option>
         {% endfor %}
@@ -14,6 +15,7 @@
 
     <label>Building Name: </label>
     <select name ="building_name" id ="building_name">
+        <option value=""></option>
         {% for name_dict in name_dict_list %}
         <option value="{{ name_dict.building_name }}"> {{ name_dict.building_name }} </option>
         {% endfor %}
@@ -39,21 +41,26 @@
         </thead>
         
         <tbody>
-            {% for ft_dict in ft_dict_list %}
+            {% for filter_dict in filter_dict_list %}
             <tr>
                 <td>
-                    <input type="radio" name="radiobutton" value="{{ ft_dict.food_truck_name }}" style="margin: 0;">
-                        <p style="display: inline-block">{{ ft_dict.food_truck_name }}</p>
+                    <input type="radio" name="radiobutton" value="{{ filter_dict.station }}" style="margin: 0;">
+                        <p style="display: inline-block">{{ filter_dict.station }}</p>
                     </input>
                 </td>
                 <td>
-                    <p name="{{ ft_dict.manager_name }}">
-                        {{ ft_dict.manager_name }}
+                    <p name="{{ filter_dict.building }}">
+                        {{ filter_dict.building }}
                     </p>
                 </td>
                 <td>
-                    <p name="{{ ft_dict.food_names }}">
-                        {{ ft_dict.food_names }}
+                    <p name="{{ filter_dict.food_truck_name}}">
+                        {{ filter_dict.food_truck_name}}
+                    </p>
+                </td>
+                <td>
+                    <p name="{{ filter_dict.food}}">
+                        {{ filter_dict.food}}
                     </p>
                 </td>
             </tr>
