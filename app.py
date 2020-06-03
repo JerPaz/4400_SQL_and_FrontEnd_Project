@@ -190,7 +190,6 @@ def customer_explore():
     c.execute(name_list_sql)
     name_list_tuple = c.fetchall()
     name_dict_list = []
-
     for i in range(len(name_list_tuple)):
         name_dict = {'station_name': name_list_tuple[i][1], 'building_name': name_list_tuple[i][0]}
         name_dict_list.append(name_dict)
@@ -206,33 +205,36 @@ def customer_explore():
             filter_dict = {'station': filter_table[i][0], 'building': filter_table[i][1], 
             'food_truck_name': filter_table[i][2].replace(',', ', '),'food':filter_table[i][3].replace(',', ', ')}
             filter_dict_list.append(filter_dict)
-        print(filter_dict_list)
+        # print(filter_dict_list)
         return render_template('/customer_explore.html', filter_dict_list=filter_dict_list, name_dict_list=name_dict_list, error=error)
     
     if request.method == 'POST':
-        station_name = request.form['station_name']
-        building_name = request.form['building_name']
-        building_tag = request.form['building_tag']
-        food_truck_name = request.form['food_truck_name']
-        food_name = request.form['food']
+        if 'filter_input' in request.form:
+            print("dbg: it works")
+            station_name = request.form['station_name']
+            building_name = request.form['building_name']
+            building_tag = request.form['building_tag']
+            food_truck_name = request.form['food_truck_name']
+            food_name = request.form['food']
 
-        filter_explore_sql = "CALL cus_filter_explore('{s_n}', '{b_n}', '{b_t}', '{f_t_n}', '{f_n}');".format(
-            s_n=station_name, b_n=building_name, b_t=building_tag, f_t_n=food_truck_name, f_n=food_name)
-        c.execute(filter_explore_sql)
-        filter_explore_table = "SELECT * FROM cus_filter_explore_result;"
-        c.execute(filter_explore_table)
-        filter_table = c.fetchall()
-        filter_dict_list = []
-        for i in range(len(filter_table)):
-            filter_dict = {'station': filter_table[i][0], 'building': filter_table[i][1], 
-            'food_truck_name': filter_table[i][2].replace(',', ', '),'food':filter_table[i][3].replace(',', ', ')}
-            filter_dict_list.append(filter_dict)
-        print(filter_dict_list)
-
+            filter_explore_sql = "CALL cus_filter_explore('{s_n}', '{b_n}', '{b_t}', '{f_t_n}', '{f_n}');".format(
+                s_n=station_name, b_n=building_name, b_t=building_tag, f_t_n=food_truck_name, f_n=food_name)
+            c.execute(filter_explore_sql)
+            filter_explore_table = "SELECT * FROM cus_filter_explore_result;"
+            c.execute(filter_explore_table)
+            filter_table = c.fetchall()
+            filter_dict_list = []
+            for i in range(len(filter_table)):
+                filter_dict = {'station': filter_table[i][0], 'building': filter_table[i][1], 
+                'food_truck_name': filter_table[i][2].replace(',', ', '),'food':filter_table[i][3].replace(',', ', ')}
+                filter_dict_list.append(filter_dict)
+            print(filter_dict_list)
+            return render_template('/customer_explore.html', filter_dict_list=filter_dict_list, name_dict_list=name_dict_list, error=error)
+        elif 'location_input' in request.form:
+            print("yippie")
         return redirect(url_for('customer_explore'))
     
     return redirect(url_for('customer_explore'))
-
 
 @app.route('/customer_current_info', methods=['GET', 'POST'])
 def customer_current_information():
