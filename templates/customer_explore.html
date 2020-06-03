@@ -1,37 +1,40 @@
 {% extends 'base.html' %}
 {% block title %}Customer Explore{% endblock %}
 {% block content %}
-<form action= "" method="post"></form>
 <h2>Explore</h2>
 <body>
 
-    <label>Station Name: </b></label>
-    <select name ="station_name" id ="station_name">
-        <option value=""></option>
-        {% for name_dict in name_dict_list %}
-        <option value="{{ name_dict.station_name }}"> {{ name_dict.station_name }} </option>
-        {% endfor %}
-    </select>
-
-    <label>Building Name: </label>
-    <select name ="building_name" id ="building_name">
-        <option value=""></option>
-        {% for name_dict in name_dict_list %}
-        <option value="{{ name_dict.building_name }}"> {{ name_dict.building_name }} </option>
-        {% endfor %}
-        <!-- for loop: 
-            <option value =  building name > '' <option> -->
-    </select>
-
-    <label>Building Tag (contain) </label>
-        <input type="text" name="building_tag" id=>
-    <label>Food Truck Name (contain) </label>
-        <input type="text" name="food_truck_name">
-    <label>Food (contain) </label>
-        <input type="text" name="food">
+    <form action="" method="post">
+        <label>Station Name: </b></label>
+        <select name ="station_name" id ="station_name">
+            <option value=""></option>
+            {% for name_dict in name_dict_list %}
+            <option value="{{ name_dict.station_name }}"> {{ name_dict.station_name }} </option>
+            {% endfor %}
+        </select>
     
-    <input onkeyup="filter_test()" placeholder="filter_test" id="filter"></button>
+        <label>Building Name: </label>
+        <select name ="building_name" id ="building_name">
+            <option value=""></option>
+            {% for name_dict in name_dict_list %}
+            <option value="{{ name_dict.building_name }}"> {{ name_dict.building_name }} </option>
+            {% endfor %}
+            <!-- for loop: 
+                <option value =  building name > '' <option> -->
+        </select>
     
+        <label>Building Tag (contain) </label>
+            <input type="text" name="building_tag">
+        <label>Food Truck Name (contain) </label>
+            <input type="text" name="food_truck_name">
+        <label>Food (contain) </label>
+            <input type="text" name="food">
+        
+        <input onkeyup="filter_test()" placeholder="filter_test" id="filter"></button>
+        <input name="filter_input" type="submit" value="value">
+    </form>
+
+    <form action="" method="post">
     <table id="station_table" style="width:100%">
         <thead>
         <tr>
@@ -67,28 +70,29 @@
         </tr>
         {% endfor %}
     </table>
-<script>
-function filter_test() {
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("filter");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("station_table");
-  tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }       
-  }
-}
-</script>
+    <input name="location_input" type="submit" value="Select As Current Location">
+    </form>
+
+    <script>
+    function filter_test() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("filter");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("station_table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+        }       
+    }
+    }
+    </script>
 </body>
 <button><a href="{{ url_for('home') }}">Back</a></button>
-<input type="submit" value="Select As Current Location">
-</form>
 {% endblock %}
