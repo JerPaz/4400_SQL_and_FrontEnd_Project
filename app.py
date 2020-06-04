@@ -172,7 +172,25 @@ def manager_food_truck_summary():
 
 @app.route('/admin_manage_building_and_station', methods=['GET'])
 def admin_manage_building_and_station():
-    return
+
+    if not request.method == 'POST':
+        filter_building_station_sql = "CALL ad_filter_building_station('', '', '', NULL, NULL);"
+        c.execute(filter_building_station_sql)
+        filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result"
+        c.execute(filter_building_station_table_sql)
+        filter_table = c.fetchall()
+        filter_dict_list = []
+        for i in range (len(filter_table)):
+            filter_dict = {'building': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
+            'station': filter_table[i][2], 'capcity': filter_table[i][3], 'food_truck_names': filter_table[i][4]}
+            filter_dict_list.append(filter_dict)
+        print(filter_dict_list)
+        return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
+
+    if request.method == 'POST':
+        return redirect(url_for('admin_manage_building_and_station'))
+
+    return redirect(url_for('admin_manage_building_and_station'))
 
 
 @app.route('/admin_create_food', methods=['GET', 'POST'])
@@ -293,7 +311,6 @@ def customer_current_information():
     if not request.method == 'POST':
         return render_template('/customer_current_info.html', cus_info_dict=cus_info_dict, ft_dict_list=ft_dict_list, error=error) 
 
-    #TODO Add food truck selection functionality
     if request.method == 'POST':
         try:
             session['selected_food_truck'] = str(request.form['radiobutton'])

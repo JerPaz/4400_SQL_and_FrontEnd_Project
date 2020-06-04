@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Admin Manage{% endblock %}
+{% block content %}
+<h2>Manage Building & Station</h2>
+<body>
+
+    <form action="" method="post">
+
+        <label>Building Name: </label>
+        <select name ="building_name" id ="building_name">
+            <option value=""></option>
+            {% for name_dict in name_dict_list %}
+            <option value="{{ name_dict.building_name }}"> {{ name_dict.building_name }} </option>
+            {% endfor %}
+            <!-- for loop: 
+                <option value =  building name > '' <option> -->
+        </select>
+
+        <label>Station Name: </b></label>
+        <select name ="station_name" id ="station_name">
+            <option value=""></option>
+            {% for name_dict in name_dict_list %}
+            <option value="{{ name_dict.station_name }}"> {{ name_dict.station_name }} </option>
+            {% endfor %}
+        </select>
+    
+        <label>Building Tag (contain) </label>
+            <input type="text" name="building_tag">
+        <label>Capacity</label>
+            <input type="number" name="min_capacity_input" min=0 size="4">
+            <input type="number" name="max_capacity_input" min=0 size="4">
+        
+        <br><input name="filter_input" type="submit" value="Filter">
+    </form>
+
+    <form action="" method="post">
+    <table id="station_table" style="table-layout: fixed;">
+        <thead>
+        <tr>
+            <th>Building</th>
+            <th>Tag(s)</th>
+            <th>Station</th>
+            <th>Capacity</th>
+            <th>Food Truck(s)</th>
+        </tr>
+        </thead>
+        
+        {% for filter_dict in filter_dict_list %}
+        <tr>
+            <td style="padding-right: 10px;">
+                <input type="radio" name="radiobutton" value="{{ filter_dict.building }}" style="margin: 0;">
+                    <p style="display: inline-block">{{ filter_dict.building }}</p>
+                </input>
+            </td>
+            <td style="padding-left: 10px; padding-right: 10px;">
+                <p name="{{ filter_dict.building_tags }}">
+                    {{ filter_dict.building_tags }}
+                </p>
+            </td>
+            <td style="padding-left: 10px; padding-right: 10px;">
+                <p name="{{ filter_dict.station }}">
+                    {{ filter_dict.station }}
+                </p>
+            </td>
+            <td style="padding-left: 10px; padding-right: 10px;">
+                <p name="{{ filter_dict.capacity }}">
+                    {{ filter_dict.capcity }}
+                </p>
+            </td>
+            <td style="text-align:center; padding-left: 10px;">
+                <p name="{{ filter_dict.food_truck_names }}">
+                    {{ filter_dict.food_truck_names }}
+                </p>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br><input name="create_building_input" type="submit" value="Create Building">
+    <input name="update_building_input" type="submit" value="Update Building">
+    <input name="delete_building_input" type="submit" value="Create Building">
+    <br><br>
+    <input name="create_station_input" type="submit" value="Create Building">
+    <input name="update_station_input" type="submit" value="Update Building">
+    <input name="delete_station_input" type="submit" value="Delete Building">
+    </form>
+</body>
+<button><a href="{{ url_for('home') }}">Back</a></button>
+{% endblock %}
