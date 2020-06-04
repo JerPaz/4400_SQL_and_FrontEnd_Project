@@ -5,7 +5,7 @@
 <body>
 
     <form action="" method="post">
-        <input onkeyup="filter_test()" placeholder="Quick Filter" id="filter"></button>
+        <input onkeyup="filter_base()" placeholder="Quick Filter Station" id="filter"></button>
         <br>
         <br>
         <label>Station Name: </b></label>
@@ -72,28 +72,53 @@
         </tr>
         {% endfor %}
     </table>
-    <input name="location_input" type="submit" value="Select As Current Location">
+    <br><input name="location_input" type="submit" value="Select As Current Location">
     </form>
 
     <script>
-    function filter_test() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("filter");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("station_table");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-        } else {
-            tr[i].style.display = "none";
+        function filter_test() {
+        var input, filter, table, tr, td, i, j, txtValue, td_inner;
+        input = document.getElementById("filter");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("station_table");
+        tr = table.getElementsByTagName("tr");
+        console.log(tr)
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++){
+                td_inner = td[i]
+                console.log(td_inner)
+                if (td_inner) {
+                txtValue = td_inner.textContent || td_inner.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+                }    
+            }   
         }
-        }       
-    }
-    }
+        }
+
+        function filter_base() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("filter");
+        filter = input.value.toUpperCase();
+        table = []
+        table = document.getElementById("station_table");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+            }       
+        }
+        }
     </script>
 </body>
 <button><a href="{{ url_for('home') }}">Back</a></button>
