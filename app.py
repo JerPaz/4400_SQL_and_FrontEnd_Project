@@ -298,7 +298,6 @@ def customer_order():
     # Go back to commit 4c675f57469d27840e17dfbcee2fe3ab63586012 () to see previous massive overhaul
     # order displays ALL food trucks at the station
     try:
-        # Will NOT work if customer has not selected a food truck
         food_sql = "SELECT foodName, price FROM cs4400spring2020.MenuItem WHERE foodTruckName = '{ft}';".format(
             ft=str(session['selected_food_truck']))
     except:
@@ -313,7 +312,7 @@ def customer_order():
             'food_name_input': 'food_name_input_{}'.format(i), 'purchase_quantity_input': 'purchase_quantity_input_{}'.format(i)}
         food_dict_list.append(food_dict)
 
-    #When page initial loads, so it doesn't go into an infinite redirect
+    # When page initial loads, so it doesn't go into an infinite redirect
     if not request.method == 'POST':
         send_order = False
         order_date = str(date.today())
@@ -323,7 +322,7 @@ def customer_order():
         return render_template('customer_order.html', food_dict_list=food_dict_list,
             food_truck = session['selected_food_truck'], error=error)
 
-    #When a form is being submitted
+    # When a form is being submitted
     if request.method == 'POST':
         for i in range(len(food_dict_list)):
             food_name_input = str(
@@ -353,6 +352,12 @@ def customer_order():
             flash('Items for purchase are not checked. Please redo order.', 'alert-error')
             return redirect(url_for('customer_order'))
         if send_order and len(order_dict_list) > 0:
+            c.execute("SELECT balance FROM cs4400spring2020.Customer WHERE username='{cus_user}';".format(
+                cus_user=session['username']))
+            current_balance = c.fetchall()[0][0]
+            if (current_balance < sum(order_prices)):
+                flash("Balance is too low. Please refill balance.", 'alert-error')
+                return redirect(url_for('customer_order'))
             order_insert_sql = "CALL cus_order('{o_date}', '{cus_order}');".format(
                 o_date=order_date, cus_order=session['username'])
             c.execute(order_insert_sql)
@@ -371,9 +376,11 @@ def customer_order():
                 c.execute(order_detail_insert_sql)
             conn.commit()
             send_order = False
+            flash("Order Successful!")
+            print("dbg 11")
+            return redirect(url_for('customer_order_history'))
 
     # NEEDS to be a redirect so it doesn't resubmit previous
-    flash("Order Successful!")
     return redirect(url_for('customer_order'))
 
 
