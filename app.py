@@ -231,8 +231,18 @@ def customer_explore():
             print(filter_dict_list)
             return render_template('/customer_explore.html', filter_dict_list=filter_dict_list, name_dict_list=name_dict_list, error=error)
         elif 'location_input' in request.form:
-            print("yippie")
-        return redirect(url_for('customer_explore'))
+            try:
+                selected_station = request.form['radiobutton']
+            except:
+                flash('Must go back to the home page or select one of the choices', 'alert-error')
+                return redirect(url_for('customer_explore'))
+            print(selected_station)
+            select_location_sql = "CALL cus_select_location ('{cus_user}', '{station_name}');".format(
+                cus_user=session['username'], station_name=selected_station)
+            c.execute(select_location_sql)
+            conn.commit()
+            flash('You have set your location to the {}'.format(selected_station))
+        return redirect(url_for('customer_current_information'))
     
     return redirect(url_for('customer_explore'))
 
@@ -265,8 +275,11 @@ def customer_current_information():
 
     #TODO Add food truck selection functionality
     if request.method == 'POST':
-        print(request.form['radiobutton'])
-        session['selected_food_truck'] = str(request.form['radiobutton'])
+        try:
+            session['selected_food_truck'] = str(request.form['radiobutton'])
+        except:
+            flash('Must go back to the home page or select one of the choices', 'alert-error')
+            return redirect(url_for('customer_current_information'))
         return redirect('/customer_order')
 
     return redirect('/customer_current_info')
