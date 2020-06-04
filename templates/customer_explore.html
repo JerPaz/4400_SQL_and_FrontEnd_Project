@@ -5,6 +5,9 @@
 <body>
 
     <form action="" method="post">
+        <input onkeyup="filter_test()" placeholder="Quick Filter" id="filter"></button>
+        <br>
+        <br>
         <label>Station Name: </b></label>
         <select name ="station_name" id ="station_name">
             <option value=""></option>
@@ -30,8 +33,7 @@
         <label>Food (contain) </label>
             <input type="text" name="food">
         
-        <input onkeyup="filter_test()" placeholder="filter_test" id="filter"></button>
-        <input name="filter_input" type="submit" value="value">
+        <br><input name="filter_input" type="submit" value="Filter">
     </form>
 
     <form action="" method="post">
