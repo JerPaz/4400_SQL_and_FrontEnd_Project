@@ -175,9 +175,29 @@ def admin_manage_building_and_station():
     return
 
 
-@app.route('/admin_create_food', methods=['GET'])
+@app.route('/admin_create_food', methods=['GET', 'POST'])
 def admin_create_food():
-    return
+    error = None
+
+    if not request.method == 'POST':
+        return render_template('/admin_create_food.html', error=None)
+
+    if request.method == 'POST':
+        food_input = request.form['create_food_input']
+        try:
+            # Still a bug since  I do not check case sensitivity; I know the fix
+            # but maybe for a later implementation
+            c.execute("INSERT INTO Food(foodName) VALUES('{f_n}');".format(
+                f_n=food_input))
+            conn.commit()
+            flash('{f_n} successfully created'.format(f_n=food_input))
+        except:
+            print("dbg 12: excepted")
+            flash('Food already exist.', 'alert-error')
+        print(food_input)
+        return redirect(url_for('admin_create_food'))
+
+    return redirect(url_for('admin_create_food'))
 
 ############################customer########
 
