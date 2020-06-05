@@ -170,24 +170,72 @@ def manager_food_truck_summary():
 ############################admin###########
 
 
-@app.route('/admin_manage_building_and_station', methods=['GET'])
+@app.route('/admin_manage_building_and_station', methods=['GET', 'POST'])
 def admin_manage_building_and_station():
 
     if not request.method == 'POST':
         filter_building_station_sql = "CALL ad_filter_building_station('', '', '', NULL, NULL);"
         c.execute(filter_building_station_sql)
-        filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result"
+        filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result;"
         c.execute(filter_building_station_table_sql)
         filter_table = c.fetchall()
         filter_dict_list = []
         for i in range (len(filter_table)):
-            filter_dict = {'building': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
-            'station': filter_table[i][2], 'capcity': filter_table[i][3], 'food_truck_names': filter_table[i][4]}
+            filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
+            'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
+            'food_truck_names': filter_table[i][4]}
+            if filter_table[i][4] != None:
+                filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
             filter_dict_list.append(filter_dict)
-        print(filter_dict_list)
         return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
 
     if request.method == 'POST':
+        if 'filter_input' in request.form:
+            building_name = request.form['building_name']
+            station_name = request.form['station_name']
+            building_tag = request.form['building_tag']
+            min_capacity = request.form['min_capacity_input']
+            max_capacity = request.form['max_capacity_input']
+            if min_capacity == '':
+                min_capacity = None
+                max_capacity = None
+            else:
+                try:
+                    min_capacity = int(request.form['min_capacity_input'])
+                    max_capacity = int(request.form['max_capacity_input'])
+                except:
+                    flash('Capacity values must be an integer', 'alert-error')
+                    return redirect(url_for('admin_manage_building_and_station'))
+                if min_capacity > max_capacity:
+                    flash('Max capacity cannot be greater than min capacity in range', 'alert-error')
+                    return redirect(url_for('admin_manage_building_and_station'))
+            
+            filter_building_station_sql = ""
+            if min_capacity == None and max_capacity == None:
+                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', NULL, NULL);".format(
+                    b_n=building_name, b_t=building_tag, s_n=station_name)
+            if min_capacity == None and max_capacity != None:
+                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', NULL, {max_c});".format(
+                    b_n=building_name, b_t=building_tag, s_n=station_name, max_c=max_capacity)
+            elif min_capacity != None and max_capacity == None:
+                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', {min_c}, NULL);".format(
+                    b_n=building_name, b_t=building_tag, s_n=station_name, min_c=min_capacity)
+            else:
+                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', {min_c}, {max_c});".format(
+                    b_n=building_name, b_t=building_tag, s_n=station_name, min_c=min_capacity, max_c=max_capacity)
+            c.execute(filter_building_station_sql)
+            filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result;"
+            c.execute(filter_building_station_table_sql)
+            filter_table = c.fetchall()
+            filter_dict_list = []
+            for i in range (len(filter_table)):
+                filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
+                'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
+                'food_truck_names': filter_table[i][4]}
+                if filter_table[i][4] != None:
+                    filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
+                filter_dict_list.append(filter_dict)
+            return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
         return redirect(url_for('admin_manage_building_and_station'))
 
     return redirect(url_for('admin_manage_building_and_station'))
