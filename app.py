@@ -180,6 +180,8 @@ def admin_manage_building_and_station():
         c.execute(filter_building_station_table_sql)
         filter_table = c.fetchall()
         filter_dict_list = []
+        building_name_list = [] # TODO implement a list of building names so the dropdown menu still works
+        station_name_list = [] # TODO see above
         for i in range (len(filter_table)):
             filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
             'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
@@ -190,44 +192,36 @@ def admin_manage_building_and_station():
         return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
 
     if request.method == 'POST':
+        if 'filter_input_reset' in request.form:
+            print("dbg 14")
+            # TODO implement reset switch
         if 'filter_input' in request.form:
             building_name = request.form['building_name']
             station_name = request.form['station_name']
             building_tag = request.form['building_tag']
             min_capacity = request.form['min_capacity_input']
             max_capacity = request.form['max_capacity_input']
-            if min_capacity == '':
+            if min_capacity == '' and max_capacity == '':
                 min_capacity = None
                 max_capacity = None
-            else:
-                try:
-                    min_capacity = int(request.form['min_capacity_input'])
-                    max_capacity = int(request.form['max_capacity_input'])
-                except:
-                    flash('Capacity values must be an integer', 'alert-error')
-                    return redirect(url_for('admin_manage_building_and_station'))
+            elif min_capacity != '' and max_capacity == '':
+                max_capcity = None
+            elif min_capacity == '' and max_capacity != '':
+                min_capacity = None
+            if min_capacity != None and max_capacity != None:
                 if min_capacity > max_capacity:
                     flash('Max capacity cannot be greater than min capacity in range', 'alert-error')
                     return redirect(url_for('admin_manage_building_and_station'))
             
-            filter_building_station_sql = ""
-            if min_capacity == None and max_capacity == None:
-                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', NULL, NULL);".format(
-                    b_n=building_name, b_t=building_tag, s_n=station_name)
-            if min_capacity == None and max_capacity != None:
-                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', NULL, {max_c});".format(
-                    b_n=building_name, b_t=building_tag, s_n=station_name, max_c=max_capacity)
-            elif min_capacity != None and max_capacity == None:
-                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', {min_c}, NULL);".format(
-                    b_n=building_name, b_t=building_tag, s_n=station_name, min_c=min_capacity)
-            else:
-                filter_building_station_sql = "CALL ad_filter_building_station('{b_n}', '{b_t}', '{s_n}', {min_c}, {max_c});".format(
-                    b_n=building_name, b_t=building_tag, s_n=station_name, min_c=min_capacity, max_c=max_capacity)
-            c.execute(filter_building_station_sql)
+            # better way to format an SQL statement and execute it
+            filter_building_station_sql = "CALL ad_filter_building_station(%s, %s, %s, %s, %s)"
+            c.execute(filter_building_station_sql, (building_name, building_tag, station_name, min_capacity, max_capacity))
             filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result;"
             c.execute(filter_building_station_table_sql)
             filter_table = c.fetchall()
             filter_dict_list = []
+            building_name_list [] # TODO implement a list of building names so the dropdown menu still works
+            station_name_list = [] # TODO see above
             for i in range (len(filter_table)):
                 filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
                 'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
