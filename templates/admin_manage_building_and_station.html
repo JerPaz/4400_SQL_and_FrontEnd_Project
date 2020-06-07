@@ -9,8 +9,8 @@
         <label>Building Name: </label>
         <select name ="building_name" id ="building_name">
             <option value=""></option>
-            {% for filter_dict in filter_dict_list %}
-            <option value="{{ filter_dict.building_name }}"> {{ filter_dict.building_name }} </option>
+            {% for building_name in building_name_list %}
+            <option value="{{ building_name }}"> {{ building_name }} </option>
             {% endfor %}
             <!-- for loop: 
                 <option value =  building name > '' <option> -->
@@ -19,8 +19,8 @@
         <label>Station Name: </b></label>
         <select name ="station_name" id ="station_name">
             <option value=""></option>
-            {% for filter_dict in filter_dict_list %}
-            <option value="{{ filter_dict.station_name }}"> {{ filter_dict.station_name }} </option>
+            {% for station_name in station_name_list %}
+            <option value="{{ station_name }}"> {{ station_name }} </option>
             {% endfor %}
         </select>
     

@@ -173,29 +173,36 @@ def manager_food_truck_summary():
 @app.route('/admin_manage_building_and_station', methods=['GET', 'POST'])
 def admin_manage_building_and_station():
 
+    filter_building_station_sql = "CALL ad_filter_building_station('', '', '', NULL, NULL);"
+    c.execute(filter_building_station_sql)
+    filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result;"
+    c.execute(filter_building_station_table_sql)
+    filter_table = c.fetchall()
+    filter_dict_list = []
+    building_name_list = []
+    station_name_list = []
+    for i in range (len(filter_table)):
+        filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
+        'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
+        'food_truck_names': filter_table[i][4]}
+        if filter_table[i][4] != None:
+            filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
+        filter_dict_list.append(filter_dict)
+    for i in range (len(filter_dict_list)):
+        building_name_list.append(filter_dict_list[i]['building_name'])
+        station_name_list.append(filter_dict_list[i]['station_name'])
+
     if not request.method == 'POST':
-        filter_building_station_sql = "CALL ad_filter_building_station('', '', '', NULL, NULL);"
-        c.execute(filter_building_station_sql)
-        filter_building_station_table_sql = "SELECT * FROM ad_filter_building_station_result;"
-        c.execute(filter_building_station_table_sql)
-        filter_table = c.fetchall()
-        filter_dict_list = []
-        building_name_list = [] # TODO implement a list of building names so the dropdown menu still works
-        station_name_list = [] # TODO see above
-        for i in range (len(filter_table)):
-            filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
-            'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
-            'food_truck_names': filter_table[i][4]}
-            if filter_table[i][4] != None:
-                filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
-            filter_dict_list.append(filter_dict)
-        return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
+        return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list,
+        building_name_list=building_name_list, station_name_list=station_name_list, error=None)
 
     if request.method == 'POST':
         if 'filter_input_reset' in request.form:
-            print("dbg 14")
-            # TODO implement reset switch
+            return (redirect(url_for('admin_manage_building_and_station')))
+
         if 'filter_input' in request.form:
+            print(building_name_list)
+            print(station_name_list)
             building_name = request.form['building_name']
             station_name = request.form['station_name']
             building_tag = request.form['building_tag']
@@ -211,8 +218,7 @@ def admin_manage_building_and_station():
             if min_capacity != None and max_capacity != None:
                 if min_capacity > max_capacity:
                     flash('Max capacity cannot be greater than min capacity in range', 'alert-error')
-                    return redirect(url_for('admin_manage_building_and_station'))
-            
+                    return redirect(url_for('admin_manage_building_and_station'))   
             # better way to format an SQL statement and execute it
             filter_building_station_sql = "CALL ad_filter_building_station(%s, %s, %s, %s, %s)"
             c.execute(filter_building_station_sql, (building_name, building_tag, station_name, min_capacity, max_capacity))
@@ -220,8 +226,6 @@ def admin_manage_building_and_station():
             c.execute(filter_building_station_table_sql)
             filter_table = c.fetchall()
             filter_dict_list = []
-            building_name_list [] # TODO implement a list of building names so the dropdown menu still works
-            station_name_list = [] # TODO see above
             for i in range (len(filter_table)):
                 filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
                 'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
@@ -229,7 +233,32 @@ def admin_manage_building_and_station():
                 if filter_table[i][4] != None:
                     filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
                 filter_dict_list.append(filter_dict)
-            return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list, error=None)
+            return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list,
+            building_name_list=building_name_list, station_name_list=station_name_list, error=None)
+        
+        # TODO 
+
+        if 'delete_building_input' in request.form:
+            try:
+                selected_building = request.form['radiobutton']
+            except:
+                flash('Must go back to the home page or select one of the choices to delete building', 'alert-error')
+                return(redirect(url_for('admin_manage_building_and_station')))
+            delete_building_sql = "CALL ad_delete_building(%s);"
+            c.execute(delete_building_sql, selected_building)
+            conn.commit()
+            flash('You have deleted building {}'.format(selected_building))
+        
+        if 'delete_station_input' in request.form:
+            try:
+                selected_station = request.form['radiobutton']
+            except:
+                flash('Must go back to the home page or select on of the choices to delete station', 'alert-error')
+                return(redirect(url_for('admin_manage_building_and_station')))
+            delete_station_sql = "CALL ad_delete_station(%s);"
+            c.execute(delete_station_sql, selected_building)
+            conn.commit()
+            flash('You have deleted station {}'.format(selected_station))
         return redirect(url_for('admin_manage_building_and_station'))
 
     return redirect(url_for('admin_manage_building_and_station'))
