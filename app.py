@@ -252,11 +252,12 @@ def admin_manage_building_and_station():
         if 'delete_station_input' in request.form:
             try:
                 selected_station = request.form['radiobutton']
+                print(selected_station)
             except:
                 flash('Must go back to the home page or select on of the choices to delete station', 'alert-error')
                 return(redirect(url_for('admin_manage_building_and_station')))
             delete_station_sql = "CALL ad_delete_station(%s);"
-            c.execute(delete_station_sql, selected_building)
+            c.execute(delete_station_sql, selected_station)
             conn.commit()
             flash('You have deleted station {}'.format(selected_station))
         return redirect(url_for('admin_manage_building_and_station'))
