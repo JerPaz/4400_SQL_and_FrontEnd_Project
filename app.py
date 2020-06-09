@@ -182,15 +182,19 @@ def admin_manage_building_and_station():
     building_name_list = []
     station_name_list = []
     for i in range (len(filter_table)):
-        filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1].replace(",", ", "), 
+        filter_dict = {'building_name': filter_table[i][0], 'building_tags': filter_table[i][1], 
         'station_name': filter_table[i][2], 'capcity': filter_table[i][3],
         'food_truck_names': filter_table[i][4]}
+        #if filter_table[i][1] != None:
+            #filter_dict[i][1] = filter_table[i][1].replace(",", ", ")
         if filter_table[i][4] != None:
             filter_dict['food_truck_names'] = filter_table[i][4].replace(",", ", ")
         filter_dict_list.append(filter_dict)
     for i in range (len(filter_dict_list)):
-        building_name_list.append(filter_dict_list[i]['building_name'])
-        station_name_list.append(filter_dict_list[i]['station_name'])
+        if filter_dict_list[i]['building_name'] != None:
+            building_name_list.append(filter_dict_list[i]['building_name'])
+        if filter_dict_list[i]['station_name'] != None:
+            station_name_list.append(filter_dict_list[i]['station_name'])
 
     if not request.method == 'POST':
         return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list,
@@ -236,7 +240,7 @@ def admin_manage_building_and_station():
             return render_template('/admin_manage_building_and_station.html', filter_dict_list=filter_dict_list,
             building_name_list=building_name_list, station_name_list=station_name_list, error=None)
         
-        # TODO 
+        # TODO implement update and create building functions
 
         if 'delete_building_input' in request.form:
             try:
@@ -245,21 +249,39 @@ def admin_manage_building_and_station():
                 flash('Must go back to the home page or select one of the choices to delete building', 'alert-error')
                 return(redirect(url_for('admin_manage_building_and_station')))
             delete_building_sql = "CALL ad_delete_building(%s);"
-            c.execute(delete_building_sql, selected_building)
+            try:
+                c.execute(delete_building_sql, selected_building)
+            except:
+                flash('If deleting a building, must make sure no remaining food trucks are connected to it', 'alert-error')
+                return redirect(url_for('admin_manage_building_and_station'))
             conn.commit()
             flash('You have deleted building {}'.format(selected_building))
+            return redirect(url_for('admin_manage_building_and_station'))
+
         
         if 'delete_station_input' in request.form:
             try:
-                selected_station = request.form['radiobutton']
-                print(selected_station)
+                selected_building = request.form['radiobutton']
+                selected_station = ''
+                for i in range(len(filter_dict_list)):
+                    #print(filter_dict_list[i])
+                    if filter_dict_list[i]['building_name'] == selected_building:
+                        print(filter_dict_list[i])
+                        selected_station = filter_dict_list[i]['station_name']
             except:
                 flash('Must go back to the home page or select on of the choices to delete station', 'alert-error')
                 return(redirect(url_for('admin_manage_building_and_station')))
+            print(selected_station)
             delete_station_sql = "CALL ad_delete_station(%s);"
-            c.execute(delete_station_sql, selected_station)
+            try:
+                c.execute(delete_station_sql, selected_station)
+            except:
+                flash('If deleting a station, must make sure there are no remaining food trucks connected to it', 'alert-error')
+                return (redirect(url_for('admin_manage_building_and_station')))
             conn.commit()
             flash('You have deleted station {}'.format(selected_station))
+            return redirect(url_for('admin_manage_building_and_station'))
+
         return redirect(url_for('admin_manage_building_and_station'))
 
     return redirect(url_for('admin_manage_building_and_station'))
