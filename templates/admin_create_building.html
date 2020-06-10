@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Admin Manage{% endblock %}
+{% block content %}
+<h2>Create Building</h2>
+<body>
+
+    <form>
+        <label>Name: </label>
+            <input type="text" name="building_name_input">
+        
+        <label>Description: </label>
+            <textarea name="description_input" style="height: 200px;width: 250px;"></textarea>
+        
+        <label>Tags: </label>
+    </form>
+
+</body>
+<button><a href="{{ url_for('admin_manage_building_and_station') }}">Back</a></button>
+{% endblock %}
