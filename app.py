@@ -292,6 +292,16 @@ def admin_manage_building_and_station():
 @app.route('/admin_create_building', methods=['GET', 'POST'])
 def admin_create_building():
     error = None
+    if request.method == 'POST':
+        if 'create_building_input' in request.form:
+            tag_list = []
+            index = 0
+            print("dbg16")
+            print(request.form['tag_{}'.format(index)])
+            while True:
+                tag_list.append(request.form['tag_{}'.format(index)])
+                index += 1
+            print(tag_list)
     return render_template('/admin_create_building.html', error=error)
 
 @app.route('/admin_create_food', methods=['GET', 'POST'])

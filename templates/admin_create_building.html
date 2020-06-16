@@ -4,7 +4,7 @@
 <h2>Create Building</h2>
 <body>
 
-    <form action="" method="post" id="pageform">
+    <form action="" method="post">
         <label>Name: </label>
             <input type="text" name="building_name_input">
         
@@ -16,11 +16,12 @@
         <label>Tags: </label>
             <ul id="taglist"></ul>
 
-        <input type="submit" value="Submit">
+        <input name="create_building_input" type="submit" value="Submit">
     </form>
 
 </body>
 <button><a href="{{ url_for('admin_manage_building_and_station') }}">Back</a></button>
+
 <script>
 
     var tag_num = 0;
@@ -30,7 +31,7 @@
         text = document.getElementById("taginput").value;
         entry = document.createElement('label');
 
-        entry.setAttribute("name", tag_num);
+        entry.setAttribute("name", "tag_" + tag_num);
         tag_num += 1;
         console.log(tag_num);
         entry.appendChild(document.createTextNode(text));
