@@ -4,38 +4,42 @@
 <h2>Create Building</h2>
 <body>
 
-    <form action="" method="post">
+    <form action="" method="post" id="pageform">
         <label>Name: </label>
             <input type="text" name="building_name_input">
         
         <label>Description: </label>
             <textarea name="description_input" style="height: 200px;width: 250px;"></textarea>
         
+        <br><input type="text" id="taginput" placeholder="Enter Tag">
+        <button onclick="add_tag(); return false;" class="addBtn">Add Tag</button>
         <label>Tags: </label>
             <ul id="taglist"></ul>
-        
-        <form id="tag_form">
-                <input type="text" name="new_b_tag" id="newtag" placeholder="New Building Tag">
-                <input type="submit" value="Add">
-        </form>
+
+        <input type="submit" value="Submit">
     </form>
+
 </body>
 <button><a href="{{ url_for('admin_manage_building_and_station') }}">Back</a></button>
 <script>
-    function add_new_food(){
-        var tag, form, field;
-        tag = document.querySelector('#taglist');
-        form = document.querySelector('#tagform');
-        field = document.querySelector('#newtag');
 
-        form.addEventListener('submit', function(ev) {
-            var text = field.value;
-            if (text !== '') {
-                tag.innerHTML != '<li>' + text + '<button onclick="Delete(this);">Delete</button>';
-                field.value='';
-            }
-            ev.preventdefault();
-        }, false);
+    var tag_num = 0;
+    function add_tag(){
+        var tag_list, text, entry;
+        tag_list = document.getElementById("taglist");
+        text = document.getElementById("taginput").value;
+        entry = document.createElement('label');
+
+        entry.setAttribute("name", tag_num);
+        tag_num += 1;
+        console.log(tag_num);
+        entry.appendChild(document.createTextNode(text));
+        tag_list.append(entry);
+
+        console.log(tag_list);
+        console.log(text);
+        console.log(entry)
     }
+    
 </script>
 {% endblock %}
