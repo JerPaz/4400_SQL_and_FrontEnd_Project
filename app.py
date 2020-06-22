@@ -292,17 +292,28 @@ def admin_manage_building_and_station():
 @app.route('/admin_create_building', methods=['GET', 'POST'])
 def admin_create_building():
     error = None
+
+    if not request.method == 'POST':
+        return render_template('admin_create_building.html', error=error)
+
     if request.method == 'POST':
         if 'create_building_input' in request.form:
+            building_name = request.form['building_name_input']
+            description = request.form['description_input']
             tag_list = []
             index = 0
-            print("dbg16")
-            print(request.form['tag_{}'.format(index)])
             while True:
-                tag_list.append(request.form['tag_{}'.format(index)])
-                index += 1
+                try:
+                    tag_list.append(request.form['hidden_input_{}'.format(index)])
+                    index += 1
+                except:
+                    break
+            print(building_name)
+            print(description)
+            print(type(description))
             print(tag_list)
-    return render_template('/admin_create_building.html', error=error)
+            return redirect(url_for('admin_create_building'))
+    return redirect(url_for('admin_create_building'))
 
 @app.route('/admin_create_food', methods=['GET', 'POST'])
 def admin_create_food():

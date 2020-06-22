@@ -33,17 +33,17 @@
         hiddeninput = document.createElement('input');
 
         entry.setAttribute("name", "tag_" + tag_num);
-        console.log(tag_num);
         entry.appendChild(document.createTextNode(text));
         tag_list.append(entry);
 
         hiddeninput.type = "hidden";
         hiddeninput.name = "hidden_input_" + tag_num;
         hiddeninput.value = text;
-        tag_list.appendChild(hiddeninput);
+        tag_list.append(hiddeninput);
 
         tag_num += 1;
 
+        console.log(tag_num);
         console.log(tag_list);
         console.log(text);
         console.log(entry)
