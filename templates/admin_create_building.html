@@ -26,16 +26,23 @@
 
     var tag_num = 0;
     function add_tag(){
-        var tag_list, text, entry;
+        var tag_list, text, entry, hiddeninput;
         tag_list = document.getElementById("taglist");
         text = document.getElementById("taginput").value;
         entry = document.createElement('label');
+        hiddeninput = document.createElement('input');
 
         entry.setAttribute("name", "tag_" + tag_num);
-        tag_num += 1;
         console.log(tag_num);
         entry.appendChild(document.createTextNode(text));
         tag_list.append(entry);
+
+        hiddeninput.type = "hidden";
+        hiddeninput.name = "hidden_input_" + tag_num;
+        hiddeninput.value = text;
+        tag_list.appendChild(hiddeninput);
+
+        tag_num += 1;
 
         console.log(tag_list);
         console.log(text);
