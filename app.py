@@ -294,6 +294,8 @@ def admin_create_building():
     error = None
 
     if not request.method == 'POST':
+        tag_list = []
+        index = 0
         return render_template('admin_create_building.html', error=error)
 
     if request.method == 'POST':
@@ -308,11 +310,19 @@ def admin_create_building():
                     index += 1
                 except:
                     break
-            print(building_name)
-            print(description)
-            print(type(description))
-            print(tag_list)
+            try:
+                create_building_sql = "CALL ad_create_building(%s, %s)"
+                c.execute(create_building_sql, (building_name, description))
+                conn.commit()
+            except:
+                flash('Builindg already exist.', 'alert-error')
+                return redirect(url_for('admin_create_building'))
+            for i in range(len(tag_list)):
+                add_tag_sql = "CALL ad_add_building_tag(%s, %s)"
+                c.execute(add_tag_sql, (building_name, description))
+                conn.commit()
             return redirect(url_for('admin_create_building'))
+            
     return redirect(url_for('admin_create_building'))
 
 @app.route('/admin_create_food', methods=['GET', 'POST'])
