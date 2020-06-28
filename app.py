@@ -244,6 +244,10 @@ def admin_manage_building_and_station():
 
         if 'create_building_input' in request.form:
             return redirect(url_for('admin_create_building'))
+        
+        if 'delete_building_input' in request.form:
+            session['admin_select_building'] = request.form['radiobutton']
+            return redirect(url_for('admin_update_building'))
 
         if 'delete_building_input' in request.form:
             try:
@@ -324,6 +328,18 @@ def admin_create_building():
             return redirect(url_for('admin_create_building'))
             
     return redirect(url_for('admin_create_building'))
+
+@app.route('/admin_update_building', methods=['GET','POST'])
+def admin_update_building():
+    error = None
+
+    if request.method != 'POST':
+        return render_template('admin_update_building.html', error=error)
+    
+    if request.method == 'POST':
+        return redirect(url_for('admin_update_building'))
+
+    return redirect(url_for('admin_update_building'))
 
 @app.route('/admin_create_food', methods=['GET', 'POST'])
 def admin_create_food():

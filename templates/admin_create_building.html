@@ -26,20 +26,31 @@
 
     var tag_num = 0;
     function add_tag(){
-        var tag_list, text, entry, hiddeninput;
+        var tag_list, text, entry, hiddeninput, deletebutton;
         tag_list = document.getElementById("taglist");
         text = document.getElementById("taginput").value;
         entry = document.createElement('label');
         hiddeninput = document.createElement('input');
+        deletebutton = document.createElement('button');
 
         entry.setAttribute("name", "tag_" + tag_num);
-        entry.appendChild(document.createTextNode(text));
+        entry.appendChild(document.createTextNode(text + " "));
         tag_list.append(entry);
 
         hiddeninput.type = "hidden";
         hiddeninput.name = "hidden_input_" + tag_num;
         hiddeninput.value = text;
         tag_list.append(hiddeninput);
+
+        deletebutton.innerHTML = "Delete Tag";
+        deletebutton.onclick = function() {
+            console.log("tag is deleted");
+            tag_list.removeChild(hiddeninput)
+            tag_list.removeChild(entry);
+            tag_num -= 1;
+            return false;
+        }
+        entry.appendChild(deletebutton);
 
         tag_num += 1;
 
